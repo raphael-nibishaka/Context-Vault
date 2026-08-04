@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.RestoreDialogController"
+      spacing="16.0" styleClass="dialog-root">
+    <padding>
+        <Insets top="22" right="22" bottom="22" left="22" />
+    </padding>
+    <children>
+        <Label text="Restore Context" styleClass="section-title" />
+        <Label fx:id="warningsLabel" styleClass="warning-label" wrapText="true" />
+
+        <VBox spacing="8.0" styleClass="form-card">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18" />
+            </padding>
+            <children>
+                <Label text="Project Name" styleClass="field-label" />
+                <Label fx:id="projectNameLabel" styleClass="dialog-value" />
+                <Label text="Git Branch" styleClass="field-label" />
+                <Label fx:id="gitBranchLabel" styleClass="dialog-value" />
+                <Label text="Project Path" styleClass="field-label" />
+                <Label fx:id="projectPathLabel" styleClass="dialog-value" wrapText="true" />
+            </children>
+        </VBox>
+
+        <VBox spacing="8.0">
+            <children>
+                <Label text="Saved Commands" styleClass="field-label" />
+                <TextArea fx:id="commandsArea" editable="false" prefRowCount="6" wrapText="true" />
+            </children>
+        </VBox>
+
+        <VBox spacing="8.0">
+            <children>
+                <Label text="Notes" styleClass="field-label" />
+                <TextArea fx:id="notesArea" editable="false" prefRowCount="5" wrapText="true" />
+            </children>
+        </VBox>
+
+        <HBox spacing="12.0">
+            <children>
+                <Button text="Copy Commands" onAction="#onCopyCommands" styleClass="secondary-button" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button text="Close" onAction="#onClose" styleClass="primary-button" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

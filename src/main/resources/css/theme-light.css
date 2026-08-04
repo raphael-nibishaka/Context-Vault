@@ -1,0 +1,140 @@
+.root {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #0F172A;
+}
+
+.label {
+    -fx-text-fill: #0F172A;
+}
+
+.sidebar,
+.main-shell,
+.content-view,
+.dialog-root {
+    -fx-background-color: #F1F5F9;
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #FFFFFF, #F8FBFF);
+    -fx-border-color: rgba(37, 99, 235, 0.12);
+    -fx-border-radius: 18px;
+}
+
+.brand-mark {
+    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}
+
+.brand-pill {
+    -fx-background-color: #E0F2FE;
+    -fx-border-color: #BAE6FD;
+    -fx-text-fill: #075985;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #334155;
+}
+
+.nav-button:hover,
+.nav-button-active {
+    -fx-background-color: rgba(37, 99, 235, 0.1);
+    -fx-text-fill: #0F172A;
+}
+
+.search-field,
+.text-field,
+.combo-box,
+.text-area,
+.combo-box-base {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: rgba(51, 65, 85, 0.12);
+    -fx-text-fill: #0F172A;
+    -fx-prompt-text-fill: #64748B;
+}
+
+.text-area .content {
+    -fx-background-color: #FFFFFF;
+}
+
+.combo-box .list-cell,
+.combo-box-popup .list-view,
+.combo-box-popup .list-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #0F172A;
+}
+
+.context-card,
+.form-card,
+.about-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: rgba(51, 65, 85, 0.08);
+}
+
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom, #3B82F6, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #60A5FA, #2563EB);
+}
+
+.secondary-button {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #0F172A;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #CBD5E1;
+}
+
+.danger-button {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #991B1B;
+}
+
+.danger-button:hover {
+    -fx-background-color: #FECACA;
+}
+
+.card-subtitle,
+.card-meta,
+.card-path,
+.card-note,
+.section-subtitle,
+.sidebar-tagline,
+.toolbar-subtitle,
+.sidebar-footer-copy,
+.about-meta,
+.about-description,
+.dialog-value {
+    -fx-text-fill: #475569;
+}
+
+.sidebar-section-label,
+.sidebar-footer-meta,
+.card-label {
+    -fx-text-fill: #0369A1;
+}
+
+.branch-chip {
+    -fx-background-color: #E0F2FE;
+    -fx-border-color: #BAE6FD;
+    -fx-border-radius: 999px;
+    -fx-text-fill: #075985;
+}
+
+.validation-label,
+.warning-label {
+    -fx-text-fill: #B91C1C;
+}
+
+.empty-state-label {
+    -fx-text-fill: #475569;
+}
+
+.about-logo {
+    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}

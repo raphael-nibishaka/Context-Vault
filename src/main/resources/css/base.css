@@ -1,0 +1,197 @@
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-font-size: 14px;
+}
+
+.sidebar {
+    -fx-background-radius: 18px;
+    -fx-spacing: 14px;
+}
+
+.sidebar-brand {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+}
+
+.brand-mark {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-alignment: center;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12px;
+}
+
+.brand-pill {
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 999px;
+    -fx-max-width: -fx-pref-width;
+}
+
+.sidebar-tagline {
+    -fx-font-size: 13px;
+    -fx-line-spacing: 2px;
+}
+
+.sidebar-section-label,
+.sidebar-footer-meta,
+.card-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-letter-spacing: 0.8px;
+}
+
+.nav-group {
+    -fx-padding: 8 0 0 0;
+}
+
+.sidebar-footer {
+    -fx-padding: 12 0 0 0;
+    -fx-spacing: 4px;
+}
+
+.sidebar-footer-copy {
+    -fx-font-size: 12px;
+    -fx-line-spacing: 2px;
+}
+
+.nav-button,
+.primary-button,
+.secondary-button,
+.danger-button {
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-padding: 10 14 10 14;
+    -fx-font-weight: 600;
+    -fx-graphic-text-gap: 9px;
+}
+
+.nav-button {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-insets: 0;
+}
+
+.main-shell {
+    -fx-background-radius: 0;
+}
+
+.top-toolbar {
+    -fx-padding: 0 0 4 0;
+}
+
+.page-title {
+    -fx-font-size: 27px;
+    -fx-font-weight: 700;
+}
+
+.toolbar-subtitle {
+    -fx-font-size: 12px;
+}
+
+.search-field,
+.text-field,
+.combo-box,
+.text-area {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10 12 10 12;
+}
+
+.content-view {
+    -fx-background-radius: 0;
+}
+
+.section-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+}
+
+.section-subtitle {
+    -fx-font-size: 13px;
+    -fx-line-spacing: 2px;
+}
+
+.cards-scroll-pane,
+.cards-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.context-card,
+.form-card,
+.about-card {
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+}
+
+.context-card {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.16), 12, 0.12, 0, 4);
+    -fx-border-width: 1px;
+}
+
+.card-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 700;
+}
+
+.branch-chip {
+    -fx-background-radius: 999px;
+    -fx-padding: 5 10 5 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.card-subtitle,
+.card-meta,
+.card-path,
+.card-note,
+.about-meta,
+.about-description,
+.dialog-value {
+    -fx-font-size: 13px;
+}
+
+.card-path {
+    -fx-line-spacing: 2px;
+    -fx-font-family: "Cascadia Code", "Consolas", monospace;
+}
+
+.card-note {
+    -fx-line-spacing: 2px;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.validation-label,
+.warning-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.empty-state-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-max-width: 420px;
+    -fx-text-alignment: center;
+}
+
+.about-logo {
+    -fx-min-width: 74px;
+    -fx-min-height: 74px;
+    -fx-max-width: 74px;
+    -fx-max-height: 74px;
+    -fx-alignment: center;
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 14px;
+}
+
+.dialog-root .text-area {
+    -fx-pref-row-count: 6;
+}

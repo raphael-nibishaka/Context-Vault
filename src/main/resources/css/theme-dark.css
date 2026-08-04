@@ -1,0 +1,140 @@
+.root {
+    -fx-background-color: #0F172A;
+    -fx-text-fill: #F8FAFC;
+}
+
+.label {
+    -fx-text-fill: #F8FAFC;
+}
+
+.sidebar,
+.main-shell,
+.content-view,
+.dialog-root {
+    -fx-background-color: #0F172A;
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #111827, #0B1220);
+    -fx-border-color: rgba(125, 211, 252, 0.18);
+    -fx-border-radius: 18px;
+}
+
+.brand-mark {
+    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}
+
+.brand-pill {
+    -fx-background-color: rgba(125, 211, 252, 0.12);
+    -fx-border-color: rgba(125, 211, 252, 0.24);
+    -fx-text-fill: #BAE6FD;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #D7E0EA;
+}
+
+.nav-button:hover,
+.nav-button-active {
+    -fx-background-color: rgba(37, 99, 235, 0.18);
+    -fx-text-fill: #F8FAFC;
+}
+
+.search-field,
+.text-field,
+.combo-box,
+.text-area,
+.combo-box-base {
+    -fx-background-color: #172132;
+    -fx-border-color: rgba(148, 163, 184, 0.14);
+    -fx-text-fill: #F8FAFC;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+.text-area .content {
+    -fx-background-color: #172132;
+}
+
+.combo-box .list-cell,
+.combo-box-popup .list-view,
+.combo-box-popup .list-cell {
+    -fx-background-color: #172132;
+    -fx-text-fill: #F8FAFC;
+}
+
+.context-card,
+.form-card,
+.about-card {
+    -fx-background-color: #162033;
+    -fx-border-color: rgba(148, 163, 184, 0.12);
+}
+
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom, #3B82F6, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #60A5FA, #2563EB);
+}
+
+.secondary-button {
+    -fx-background-color: rgba(148, 163, 184, 0.1);
+    -fx-text-fill: #F8FAFC;
+}
+
+.secondary-button:hover {
+    -fx-background-color: rgba(148, 163, 184, 0.16);
+}
+
+.danger-button {
+    -fx-background-color: rgba(239, 68, 68, 0.14);
+    -fx-text-fill: #F8FAFC;
+}
+
+.danger-button:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.22);
+}
+
+.card-subtitle,
+.card-meta,
+.card-path,
+.card-note,
+.section-subtitle,
+.sidebar-tagline,
+.toolbar-subtitle,
+.sidebar-footer-copy,
+.about-meta,
+.about-description,
+.dialog-value {
+    -fx-text-fill: #CBD5E1;
+}
+
+.sidebar-section-label,
+.sidebar-footer-meta,
+.card-label {
+    -fx-text-fill: #7DD3FC;
+}
+
+.branch-chip {
+    -fx-background-color: rgba(56, 189, 248, 0.14);
+    -fx-border-color: rgba(56, 189, 248, 0.32);
+    -fx-border-radius: 999px;
+    -fx-text-fill: #BAE6FD;
+}
+
+.validation-label,
+.warning-label {
+    -fx-text-fill: #FCA5A5;
+}
+
+.empty-state-label {
+    -fx-text-fill: #CBD5E1;
+}
+
+.about-logo {
+    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-text-fill: #F8FAFC;
+}

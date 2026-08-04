@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.AboutController"
+      spacing="18.0" styleClass="content-view">
+    <children>
+        <VBox spacing="16.0" styleClass="about-card">
+            <padding>
+                <Insets top="26" right="26" bottom="26" left="26" />
+            </padding>
+            <children>
+                <Label text="CV" styleClass="about-logo" />
+                <Label fx:id="appNameLabel" styleClass="section-title" />
+                <Label fx:id="taglineLabel" styleClass="section-subtitle" wrapText="true" />
+                <Label fx:id="versionLabel" styleClass="about-meta" />
+                <Label fx:id="developerLabel" styleClass="about-meta" />
+                <Label text="Context Vault is a polished workspace memory layer for developers. It keeps the branch, folder, commands, and notes that disappear when real work gets interrupted." wrapText="true" styleClass="about-description" />
+            </children>
+        </VBox>
+    </children>
+    <padding>
+        <Insets top="6" right="6" bottom="6" left="6" />
+    </padding>
+</VBox>

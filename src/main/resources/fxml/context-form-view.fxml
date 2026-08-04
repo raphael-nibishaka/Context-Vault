@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ContextFormController"
+      spacing="18.0" styleClass="content-view">
+    <children>
+        <VBox spacing="6.0">
+            <children>
+                <Label fx:id="formTitleLabel" text="Create Context" styleClass="section-title" />
+                <Label text="Save the project details you will want the next time this work interrupts your day." styleClass="section-subtitle" wrapText="true" />
+            </children>
+        </VBox>
+
+        <VBox spacing="18.0" styleClass="form-card">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24" />
+            </padding>
+            <children>
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Context Name" styleClass="field-label" />
+                        <TextField fx:id="nameField" promptText="AgriSense Backend" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Project Folder" styleClass="field-label" />
+                        <HBox spacing="12.0">
+                            <children>
+                                <TextField fx:id="projectPathField" promptText="C:\Projects\MyApp" HBox.hgrow="ALWAYS" />
+                                <Button text="Browse" onAction="#onBrowseProjectFolder" styleClass="secondary-button" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Git Branch" styleClass="field-label" />
+                        <TextField fx:id="gitBranchField" promptText="feature/auth" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Development Commands" styleClass="field-label" />
+                        <TextArea fx:id="commandsArea" prefRowCount="6" promptText="npm install&#10;npm run dev&#10;docker compose up" wrapText="true" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Notes" styleClass="field-label" />
+                        <TextArea fx:id="notesArea" prefRowCount="6" promptText="Need to fix JWT refresh token." wrapText="true" />
+                    </children>
+                </VBox>
+
+                <Label fx:id="validationLabel" styleClass="validation-label" wrapText="true" />
+
+                <HBox spacing="12.0">
+                    <children>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="Cancel" onAction="#onCancel" styleClass="secondary-button" />
+                        <Button fx:id="saveButton" text="Save Context" onAction="#onSaveContext" styleClass="primary-button" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+    <padding>
+        <Insets top="6" right="6" bottom="6" left="6" />
+    </padding>
+</VBox>
