@@ -28,7 +28,7 @@
                         </FlowPane>
                     </content>
                 </ScrollPane>
-                <Label fx:id="emptyStateLabel" text="No contexts found. Create your first context to get started." wrapText="true" styleClass="empty-state-label" />
+                <Label fx:id="emptyStateLabel" text="No contexts yet. Capture a branch, path, commands, and notes so your next restore feels instant." wrapText="true" styleClass="empty-state-label" />
             </children>
         </StackPane>
     </children>

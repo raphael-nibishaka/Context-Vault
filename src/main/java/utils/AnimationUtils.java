@@ -23,11 +23,13 @@ public final class AnimationUtils {
         if (node == null) {
             return;
         }
-        ScaleTransition transition = new ScaleTransition(Duration.millis(160), node);
-        transition.setFromX(0.98);
-        transition.setFromY(0.98);
-        transition.setToX(1.0);
-        transition.setToY(1.0);
+        ScaleTransition transition = new ScaleTransition(Duration.millis(180), node);
+        transition.setFromX(0.985);
+        transition.setFromY(0.985);
+        transition.setToX(1.015);
+        transition.setToY(1.015);
+        transition.setAutoReverse(true);
+        transition.setCycleCount(2);
         transition.play();
     }
 }

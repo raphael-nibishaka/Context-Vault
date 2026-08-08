@@ -40,7 +40,7 @@
                         <ComboBox fx:id="themeComboBox" maxWidth="1.7976931348623157E308" />
                     </children>
                 </VBox>
-                <Button text="Save Settings" onAction="#onSaveSettings" styleClass="primary-button" />
+                <Button fx:id="saveSettingsButton" text="Save Settings" onAction="#onSaveSettings" styleClass="primary-button, glass-button" />
             </children>
         </VBox>
     </children>

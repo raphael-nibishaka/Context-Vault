@@ -3,12 +3,15 @@ package controllers;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import models.AppTheme;
 import models.PreferredEditor;
 import models.PreferredTerminal;
 import services.ApplicationCoordinator;
+import utils.ButtonFactory;
 import utils.DialogUtils;
 
 public class SettingsController {
@@ -18,6 +21,8 @@ public class SettingsController {
     private ComboBox<PreferredTerminal> terminalComboBox;
     @FXML
     private ComboBox<AppTheme> themeComboBox;
+    @FXML
+    private Button saveSettingsButton;
 
     private ApplicationCoordinator coordinator;
     private Stage ownerStage;
@@ -34,6 +39,9 @@ public class SettingsController {
         editorComboBox.valueProperty().bindBidirectional(viewModel.preferredEditorProperty());
         terminalComboBox.valueProperty().bindBidirectional(viewModel.preferredTerminalProperty());
         themeComboBox.valueProperty().bindBidirectional(viewModel.themeProperty());
+
+        ButtonFactory.decorate(saveSettingsButton, "fas-save");
+        saveSettingsButton.setTooltip(new Tooltip("Save editor, terminal, and theme preferences"));
     }
 
     @FXML

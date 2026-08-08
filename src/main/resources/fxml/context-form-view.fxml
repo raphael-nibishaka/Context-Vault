@@ -39,7 +39,7 @@
                         <HBox spacing="12.0">
                             <children>
                                 <TextField fx:id="projectPathField" promptText="C:\Projects\MyApp" HBox.hgrow="ALWAYS" />
-                                <Button text="Browse" onAction="#onBrowseProjectFolder" styleClass="secondary-button" />
+                                <Button fx:id="browseButton" text="Browse" onAction="#onBrowseProjectFolder" styleClass="secondary-button, glass-button" />
                             </children>
                         </HBox>
                     </children>
@@ -71,8 +71,8 @@
                 <HBox spacing="12.0">
                     <children>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button text="Cancel" onAction="#onCancel" styleClass="secondary-button" />
-                        <Button fx:id="saveButton" text="Save Context" onAction="#onSaveContext" styleClass="primary-button" />
+                        <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel" styleClass="secondary-button, glass-button" />
+                        <Button fx:id="saveButton" text="Save Context" onAction="#onSaveContext" styleClass="primary-button, glass-button" />
                     </children>
                 </HBox>
             </children>

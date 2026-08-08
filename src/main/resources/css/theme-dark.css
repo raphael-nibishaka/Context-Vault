@@ -1,44 +1,108 @@
-.root {
-    -fx-background-color: #0F172A;
+.root,
+.app-root {
+    -fx-background-color: linear-gradient(to bottom right, #050B16, #0A1628 40%, #10233A 78%, #0B1A2E);
     -fx-text-fill: #F8FAFC;
+}
+
+.window-shell,
+.glass-window {
+    -fx-background-color: linear-gradient(to bottom, rgba(12, 22, 38, 0.92), rgba(8, 16, 28, 0.88));
+    -fx-border-color: rgba(255, 255, 255, 0.16);
+}
+
+.app-header,
+.glass-header {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+    -fx-border-color: rgba(255, 255, 255, 0.12);
+}
+
+.header-title {
+    -fx-text-fill: #F8FAFC;
+}
+
+.header-subtitle {
+    -fx-text-fill: #94A3B8;
+}
+
+.window-button {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-border-color: rgba(255, 255, 255, 0.12);
+    -fx-text-fill: #E2E8F0;
+}
+
+.window-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+}
+
+.window-close:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.85);
+    -fx-border-color: rgba(252, 165, 165, 0.5);
+    -fx-text-fill: #FFFFFF;
 }
 
 .label {
     -fx-text-fill: #F8FAFC;
 }
 
-.sidebar,
-.main-shell,
-.content-view,
-.dialog-root {
-    -fx-background-color: #0F172A;
+.ambient-blob-one {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 68%, rgba(56, 189, 248, 0.62), transparent);
 }
 
-.sidebar {
-    -fx-background-color: linear-gradient(to bottom, #111827, #0B1220);
-    -fx-border-color: rgba(125, 211, 252, 0.18);
-    -fx-border-radius: 18px;
+.ambient-blob-two {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 68%, rgba(99, 102, 241, 0.55), transparent);
+}
+
+.ambient-blob-three {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 68%, rgba(14, 165, 233, 0.45), transparent);
+}
+
+.sidebar,
+.top-toolbar,
+.content-shell,
+.context-card,
+.form-card,
+.about-card,
+.dialog-root {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+    -fx-border-color: rgba(255, 255, 255, 0.22);
+}
+
+.main-shell,
+.content-view {
+    -fx-background-color: transparent;
+}
+
+.glass-inset {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-border-color: rgba(255, 255, 255, 0.14);
 }
 
 .brand-mark {
-    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-background-color: linear-gradient(to bottom right, rgba(56, 189, 248, 0.98), rgba(37, 99, 235, 0.98));
     -fx-text-fill: #F8FAFC;
 }
 
 .brand-pill {
-    -fx-background-color: rgba(125, 211, 252, 0.12);
-    -fx-border-color: rgba(125, 211, 252, 0.24);
+    -fx-background-color: rgba(125, 211, 252, 0.16);
+    -fx-border-color: rgba(125, 211, 252, 0.38);
     -fx-text-fill: #BAE6FD;
 }
 
 .nav-button {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-text-fill: #D7E0EA;
 }
 
-.nav-button:hover,
+.nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.16);
+    -fx-text-fill: #F8FAFC;
+}
+
 .nav-button-active {
-    -fx-background-color: rgba(37, 99, 235, 0.18);
+    -fx-background-color: linear-gradient(to right, rgba(37, 99, 235, 0.34), rgba(56, 189, 248, 0.14));
+    -fx-border-color: rgba(125, 211, 252, 0.35);
     -fx-text-fill: #F8FAFC;
 }
 
@@ -46,56 +110,70 @@
 .text-field,
 .combo-box,
 .text-area,
-.combo-box-base {
-    -fx-background-color: #172132;
-    -fx-border-color: rgba(148, 163, 184, 0.14);
+.combo-box-base,
+.glass-input {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.18);
     -fx-text-fill: #F8FAFC;
-    -fx-prompt-text-fill: #94A3B8;
+    -fx-prompt-text-fill: rgba(203, 213, 225, 0.72);
 }
 
 .text-area .content {
-    -fx-background-color: #172132;
+    -fx-background-color: transparent;
 }
 
 .combo-box .list-cell,
 .combo-box-popup .list-view,
 .combo-box-popup .list-cell {
-    -fx-background-color: #172132;
+    -fx-background-color: rgba(10, 18, 32, 0.96);
     -fx-text-fill: #F8FAFC;
 }
 
-.context-card,
-.form-card,
-.about-card {
-    -fx-background-color: #162033;
-    -fx-border-color: rgba(148, 163, 184, 0.12);
-}
-
 .primary-button {
-    -fx-background-color: linear-gradient(to bottom, #3B82F6, #2563EB);
+    -fx-background-color: linear-gradient(to bottom, rgba(96, 165, 250, 0.96), rgba(37, 99, 235, 0.96));
+    -fx-border-color: rgba(191, 219, 254, 0.42);
     -fx-text-fill: #F8FAFC;
 }
 
 .primary-button:hover {
-    -fx-background-color: linear-gradient(to bottom, #60A5FA, #2563EB);
+    -fx-background-color: linear-gradient(to bottom, rgba(125, 211, 252, 0.98), rgba(59, 130, 246, 0.98));
 }
 
-.secondary-button {
-    -fx-background-color: rgba(148, 163, 184, 0.1);
+.secondary-button,
+.ghost-button,
+.icon-button {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.16);
     -fx-text-fill: #F8FAFC;
 }
 
-.secondary-button:hover {
-    -fx-background-color: rgba(148, 163, 184, 0.16);
+.secondary-button:hover,
+.ghost-button:hover,
+.icon-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-border-color: rgba(255, 255, 255, 0.26);
 }
 
 .danger-button {
-    -fx-background-color: rgba(239, 68, 68, 0.14);
-    -fx-text-fill: #F8FAFC;
+    -fx-background-color: rgba(239, 68, 68, 0.2);
+    -fx-border-color: rgba(252, 165, 165, 0.32);
+    -fx-text-fill: #FECACA;
 }
 
 .danger-button:hover {
-    -fx-background-color: rgba(239, 68, 68, 0.22);
+    -fx-background-color: rgba(239, 68, 68, 0.32);
+}
+
+.button-icon {
+    -fx-icon-color: #E2E8F0;
+}
+
+.primary-button .button-icon {
+    -fx-icon-color: #F8FAFC;
+}
+
+.danger-button .button-icon {
+    -fx-icon-color: #FECACA;
 }
 
 .card-subtitle,
@@ -119,10 +197,13 @@
 }
 
 .branch-chip {
-    -fx-background-color: rgba(56, 189, 248, 0.14);
-    -fx-border-color: rgba(56, 189, 248, 0.32);
-    -fx-border-radius: 999px;
+    -fx-background-color: rgba(56, 189, 248, 0.16);
+    -fx-border-color: rgba(125, 211, 252, 0.38);
     -fx-text-fill: #BAE6FD;
+}
+
+.card-divider {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
 }
 
 .validation-label,
@@ -135,6 +216,48 @@
 }
 
 .about-logo {
-    -fx-background-color: linear-gradient(to bottom right, #38BDF8, #2563EB);
+    -fx-background-color: linear-gradient(to bottom right, rgba(56, 189, 248, 0.98), rgba(37, 99, 235, 0.98));
     -fx-text-fill: #F8FAFC;
+}
+
+.glass-alert {
+    -fx-background-color: linear-gradient(to bottom, rgba(18, 28, 46, 0.94), rgba(10, 18, 32, 0.92));
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+}
+
+.glass-alert-header {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-alert-footer {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-alert-title,
+.glass-alert-heading {
+    -fx-text-fill: #F8FAFC;
+}
+
+.glass-alert-message {
+    -fx-text-fill: #CBD5E1;
+}
+
+.glass-alert-icon-info {
+    -fx-background-color: rgba(56, 189, 248, 0.18);
+    -fx-border-color: rgba(125, 211, 252, 0.4);
+    -fx-text-fill: #7DD3FC;
+}
+
+.glass-alert-icon-confirm {
+    -fx-background-color: rgba(37, 99, 235, 0.22);
+    -fx-border-color: rgba(96, 165, 250, 0.45);
+    -fx-text-fill: #93C5FD;
+}
+
+.glass-alert-icon-error {
+    -fx-background-color: rgba(239, 68, 68, 0.2);
+    -fx-border-color: rgba(252, 165, 165, 0.4);
+    -fx-text-fill: #FCA5A5;
 }

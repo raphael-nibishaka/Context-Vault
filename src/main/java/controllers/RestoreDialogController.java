@@ -1,11 +1,14 @@
 package controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import models.ContextEntry;
 import services.ApplicationCoordinator;
+import utils.ButtonFactory;
 import viewmodels.RestoreDialogViewModel;
 
 public class RestoreDialogController {
@@ -21,6 +24,12 @@ public class RestoreDialogController {
     private TextArea notesArea;
     @FXML
     private Label warningsLabel;
+    @FXML
+    private Button copyCommandsButton;
+    @FXML
+    private Button closeButton;
+    @FXML
+    private Button headerCloseButton;
 
     private final RestoreDialogViewModel viewModel = new RestoreDialogViewModel();
     private ApplicationCoordinator coordinator;
@@ -37,6 +46,14 @@ public class RestoreDialogController {
         warningsLabel.textProperty().bind(viewModel.warningsProperty());
         warningsLabel.managedProperty().bind(warningsLabel.visibleProperty());
         warningsLabel.visibleProperty().bind(viewModel.warningsProperty().isNotEmpty());
+
+        ButtonFactory.decorate(copyCommandsButton, "fas-copy");
+        ButtonFactory.decorate(closeButton, "fas-check");
+        copyCommandsButton.setTooltip(new Tooltip("Copy saved commands to clipboard"));
+        closeButton.setTooltip(new Tooltip("Close restore panel"));
+        if (headerCloseButton != null) {
+            headerCloseButton.setTooltip(new Tooltip("Close"));
+        }
     }
 
     @FXML

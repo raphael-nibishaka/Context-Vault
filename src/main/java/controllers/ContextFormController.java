@@ -7,8 +7,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.Tooltip;
 import models.ContextEntry;
 import services.ApplicationCoordinator;
+import utils.ButtonFactory;
 import utils.DialogUtils;
 
 import java.io.File;
@@ -30,6 +32,10 @@ public class ContextFormController {
     private Label validationLabel;
     @FXML
     private Button saveButton;
+    @FXML
+    private Button browseButton;
+    @FXML
+    private Button cancelButton;
 
     private ApplicationCoordinator coordinator;
     private Stage ownerStage;
@@ -45,6 +51,13 @@ public class ContextFormController {
         commandsArea.textProperty().bindBidirectional(viewModel.commandsProperty());
         notesArea.textProperty().bindBidirectional(viewModel.notesProperty());
         validationLabel.textProperty().bind(viewModel.validationMessageProperty());
+
+        ButtonFactory.decorate(browseButton, "fas-folder-open");
+        ButtonFactory.decorate(cancelButton, "fas-times");
+        ButtonFactory.decorate(saveButton, "fas-save");
+        browseButton.setTooltip(new Tooltip("Choose project folder"));
+        cancelButton.setTooltip(new Tooltip("Discard changes"));
+        saveButton.setTooltip(new Tooltip("Save this context"));
 
         refreshFormLabels();
         viewModel.editModeProperty().addListener((observable, oldValue, newValue) -> refreshFormLabels());
