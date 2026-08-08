@@ -1,35 +1,127 @@
-.root {
-    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+.root,
+.app-root {
+    -fx-font-family: "Segoe UI Variable", "Segoe UI", "Inter", sans-serif;
     -fx-font-size: 14px;
+    -fx-background-radius: 18px;
+}
+
+.window-shell,
+.glass-window {
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-border-width: 1.2px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 36, 0.25, 0, 12);
+}
+
+.app-header,
+.glass-header {
+    -fx-background-radius: 18px 18px 0 0;
+    -fx-border-radius: 18px 18px 0 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-min-height: 54px;
+    -fx-cursor: default;
+}
+
+.header-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.header-subtitle {
+    -fx-font-size: 11px;
+}
+
+.header-logo {
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.3), 12, 0.3, 0, 2);
+}
+
+.window-button {
+    -fx-min-width: 38px;
+    -fx-min-height: 32px;
+    -fx-max-width: 38px;
+    -fx-max-height: 32px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.app-frame {
+    -fx-background-color: transparent;
+}
+
+.ambient-blob {
+    -fx-background-radius: 999px;
+    -fx-opacity: 0.7;
+}
+
+.ambient-blob-one {
+    -fx-min-width: 460px;
+    -fx-min-height: 460px;
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.45), 90, 0.45, 0, 0);
+}
+
+.ambient-blob-two {
+    -fx-min-width: 380px;
+    -fx-min-height: 380px;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.4), 90, 0.4, 0, 0);
+}
+
+.ambient-blob-three {
+    -fx-min-width: 300px;
+    -fx-min-height: 300px;
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.35), 80, 0.4, 0, 0);
+}
+
+.glass-panel {
+    -fx-background-radius: 24px;
+    -fx-border-radius: 24px;
+    -fx-border-width: 1.2px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.32), 34, 0.22, 0, 12);
+}
+
+.glass-inset {
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
 }
 
 .sidebar {
-    -fx-background-radius: 18px;
     -fx-spacing: 14px;
 }
 
 .sidebar-brand {
-    -fx-font-size: 22px;
+    -fx-font-size: 21px;
     -fx-font-weight: 700;
 }
 
+.brand-logo {
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.35), 16, 0.35, 0, 3);
+}
+
 .brand-mark {
-    -fx-min-width: 40px;
-    -fx-min-height: 40px;
-    -fx-max-width: 40px;
-    -fx-max-height: 40px;
+    -fx-min-width: 44px;
+    -fx-min-height: 44px;
+    -fx-max-width: 44px;
+    -fx-max-height: 44px;
     -fx-alignment: center;
     -fx-font-size: 14px;
     -fx-font-weight: 800;
-    -fx-background-radius: 12px;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.5), 20, 0.4, 0, 5);
 }
 
 .brand-pill {
-    -fx-padding: 3 8 3 8;
+    -fx-padding: 3 9 3 9;
     -fx-font-size: 10px;
     -fx-font-weight: 800;
     -fx-background-radius: 999px;
-    -fx-max-width: -fx-pref-width;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1px;
+    -fx-max-width: 64px;
 }
 
 .sidebar-tagline {
@@ -42,15 +134,15 @@
 .card-label {
     -fx-font-size: 11px;
     -fx-font-weight: 700;
-    -fx-letter-spacing: 0.8px;
+    -fx-letter-spacing: 0.9px;
 }
 
 .nav-group {
     -fx-padding: 8 0 0 0;
+    -fx-spacing: 8px;
 }
 
 .sidebar-footer {
-    -fx-padding: 12 0 0 0;
     -fx-spacing: 4px;
 }
 
@@ -59,32 +151,48 @@
     -fx-line-spacing: 2px;
 }
 
+.glass-button,
 .nav-button,
 .primary-button,
 .secondary-button,
-.danger-button {
-    -fx-background-radius: 10px;
+.danger-button,
+.ghost-button,
+.icon-button {
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
     -fx-cursor: hand;
-    -fx-padding: 10 14 10 14;
-    -fx-font-weight: 600;
-    -fx-graphic-text-gap: 9px;
+    -fx-padding: 11 16 11 16;
+    -fx-font-weight: 700;
+    -fx-graphic-text-gap: 10px;
+    -fx-border-width: 1px;
 }
 
 .nav-button {
     -fx-alignment: CENTER_LEFT;
     -fx-background-insets: 0;
+    -fx-min-height: 42px;
+}
+
+.icon-button {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-padding: 8 10 8 10;
+}
+
+.button-icon {
+    -fx-icon-size: 14px;
 }
 
 .main-shell {
-    -fx-background-radius: 0;
+    -fx-background-color: transparent;
 }
 
 .top-toolbar {
-    -fx-padding: 0 0 4 0;
+    -fx-spacing: 14px;
 }
 
 .page-title {
-    -fx-font-size: 27px;
+    -fx-font-size: 28px;
     -fx-font-weight: 700;
 }
 
@@ -95,14 +203,21 @@
 .search-field,
 .text-field,
 .combo-box,
-.text-area {
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-padding: 10 12 10 12;
+.text-area,
+.glass-input {
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-padding: 12 14 12 14;
+    -fx-border-width: 1px;
 }
 
 .content-view {
+    -fx-background-color: transparent;
     -fx-background-radius: 0;
+}
+
+.content-shell {
+    -fx-padding: 10;
 }
 
 .section-title {
@@ -122,14 +237,15 @@
 
 .context-card,
 .form-card,
-.about-card {
-    -fx-background-radius: 14px;
-    -fx-border-radius: 14px;
+.about-card,
+.dialog-root {
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1.2px;
 }
 
 .context-card {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.16), 12, 0.12, 0, 4);
-    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.24), 24, 0.2, 0, 9);
 }
 
 .card-title {
@@ -139,9 +255,23 @@
 
 .branch-chip {
     -fx-background-radius: 999px;
-    -fx-padding: 5 10 5 10;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1px;
+    -fx-padding: 5 11 5 11;
     -fx-font-size: 11px;
     -fx-font-weight: 700;
+    -fx-font-family: "Cascadia Code", "Consolas", monospace;
+}
+
+.card-actions {
+    -fx-padding: 4 0 0 0;
+    -fx-spacing: 8px;
+}
+
+.card-divider {
+    -fx-min-height: 1px;
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
 }
 
 .card-subtitle,
@@ -177,21 +307,94 @@
 .empty-state-label {
     -fx-font-size: 15px;
     -fx-font-weight: 600;
-    -fx-max-width: 420px;
+    -fx-max-width: 440px;
     -fx-text-alignment: center;
 }
 
 .about-logo {
-    -fx-min-width: 74px;
-    -fx-min-height: 74px;
-    -fx-max-width: 74px;
-    -fx-max-height: 74px;
+    -fx-min-width: 76px;
+    -fx-min-height: 76px;
+    -fx-max-width: 76px;
+    -fx-max-height: 76px;
     -fx-alignment: center;
     -fx-font-size: 22px;
     -fx-font-weight: 700;
-    -fx-background-radius: 14px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.45), 22, 0.4, 0, 5);
+}
+
+.about-logo-image {
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.35), 20, 0.35, 0, 4);
 }
 
 .dialog-root .text-area {
     -fx-pref-row-count: 6;
+}
+
+.glass-alert-overlay {
+    -fx-background-color: rgba(2, 8, 18, 0.42);
+    -fx-background-radius: 0;
+    -fx-padding: 24;
+}
+
+.glass-alert {
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1.2px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 40, 0.28, 0, 14);
+    -fx-min-width: 420px;
+}
+
+.glass-alert-header {
+    -fx-background-radius: 20px 20px 0 0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.glass-alert-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+
+.glass-alert-body {
+    -fx-spacing: 12px;
+}
+
+.glass-alert-heading {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+}
+
+.glass-alert-message {
+    -fx-font-size: 13px;
+    -fx-line-spacing: 2px;
+}
+
+.glass-alert-icon {
+    -fx-min-width: 54px;
+    -fx-min-height: 54px;
+    -fx-max-width: 54px;
+    -fx-max-height: 54px;
+    -fx-alignment: center;
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1px;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+.glass-alert-footer {
+    -fx-background-radius: 0 0 20px 20px;
+    -fx-border-width: 1 0 0 0;
+}
+
+.primary-button {
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.48), 18, 0.38, 0, 5);
+}
+
+.primary-button:pressed,
+.secondary-button:pressed,
+.danger-button:pressed,
+.nav-button:pressed,
+.ghost-button:pressed {
+    -fx-translate-y: 1px;
 }

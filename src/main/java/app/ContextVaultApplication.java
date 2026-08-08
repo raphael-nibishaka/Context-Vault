@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import services.ApplicationCoordinator;
 import services.ServiceContainer;
@@ -28,10 +29,15 @@ public class ContextVaultApplication extends Application {
         controller.initialize(primaryStage, coordinator);
 
         Scene scene = new Scene(root, 1400, 860);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         ThemeManager themeManager = coordinator.getThemeManager();
         themeManager.applyTheme(scene, coordinator.getSettingsService().loadSettings().theme());
 
+        primaryStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
         primaryStage.setTitle(AppMetadata.APP_NAME);
+        primaryStage.getIcons().setAll(
+                new Image(getClass().getResourceAsStream("/images/context-vault-logo.png"))
+        );
         primaryStage.setMinWidth(1100);
         primaryStage.setMinHeight(700);
         primaryStage.setScene(scene);

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.GlassAlertController"
+           styleClass="glass-alert-overlay">
+    <children>
+        <VBox spacing="0" styleClass="glass-alert, glass-window" maxWidth="460" StackPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="glass-alert-header">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="16" />
+                    </padding>
+                    <children>
+                        <ImageView fitWidth="26" fitHeight="26" preserveRatio="true" smooth="true">
+                            <image>
+                                <Image url="@../images/context-vault-logo.png" />
+                            </image>
+                        </ImageView>
+                        <Label fx:id="titleLabel" text="Dialog" styleClass="glass-alert-title" />
+                        <HBox HBox.hgrow="ALWAYS" />
+                        <Button fx:id="headerCloseButton" text="✕" onAction="#onCancel" styleClass="window-button, window-close" />
+                    </children>
+                </HBox>
+
+                <VBox spacing="14.0" styleClass="glass-alert-body">
+                    <padding>
+                        <Insets top="20" right="22" bottom="10" left="22" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="16.0">
+                            <children>
+                                <Label fx:id="iconLabel" text="?" styleClass="glass-alert-icon" />
+                                <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label fx:id="headerLabel" styleClass="glass-alert-heading" wrapText="true" />
+                                        <Label fx:id="contentLabel" styleClass="glass-alert-message" wrapText="true" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <HBox spacing="10.0" alignment="CENTER_RIGHT" styleClass="glass-alert-footer">
+                    <padding>
+                        <Insets top="14" right="18" bottom="18" left="18" />
+                    </padding>
+                    <children>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel" styleClass="secondary-button, glass-button" />
+                        <Button fx:id="confirmButton" text="OK" onAction="#onConfirm" styleClass="primary-button, glass-button" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

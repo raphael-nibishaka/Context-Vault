@@ -12,14 +12,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.ContextEntry;
-import org.kordamp.ikonli.javafx.FontIcon;
 import services.ApplicationCoordinator;
 import services.RestoreResult;
 import utils.AnimationUtils;
+import utils.ButtonFactory;
 import utils.DateTimeUtils;
 import utils.DialogUtils;
 
@@ -57,13 +59,12 @@ public class DashboardController {
     private void renderCards() {
         cardsPane.getChildren().clear();
         var contexts = coordinator.getDashboardViewModel().getContexts();
-        summaryLabel.setText(contexts.size() + " saved context" + (contexts.size() == 1 ? "" : "s"));
+        summaryLabel.setText(contexts.size() + " saved context" + (contexts.size() == 1 ? "" : "s") + " ready to restore");
         emptyStateLabel.setVisible(contexts.isEmpty());
         emptyStateLabel.setManaged(contexts.isEmpty());
 
         for (ContextEntry contextEntry : contexts) {
-            VBox card = createCard(contextEntry);
-            cardsPane.getChildren().add(card);
+            cardsPane.getChildren().add(createCard(contextEntry));
         }
         AnimationUtils.fadeIn(cardsScrollPane);
     }
@@ -72,52 +73,55 @@ public class DashboardController {
         Label branchChip = new Label(blankFallback(contextEntry.getGitBranch()));
         branchChip.getStyleClass().add("branch-chip");
 
+        Label statusChip = new Label("LOCAL");
+        statusChip.getStyleClass().add("branch-chip");
+
         Label titleLabel = new Label(contextEntry.getName());
         titleLabel.getStyleClass().add("card-title");
 
-        Label branchLabel = new Label("Current branch");
+        Label branchLabel = new Label("BRANCH");
         branchLabel.getStyleClass().add("card-label");
 
         Label pathLabel = new Label(contextEntry.getProjectPath());
         pathLabel.getStyleClass().add("card-path");
         pathLabel.setWrapText(true);
 
-        Label notePreview = new Label(buildPreview(contextEntry.getNote(), "No saved note for this context."));
+        Label notePreview = new Label(buildPreview(contextEntry.getNote(), "No notes saved for this session."));
         notePreview.getStyleClass().add("card-note");
         notePreview.setWrapText(true);
 
-        Label createdLabel = new Label("Created: " + DateTimeUtils.format(contextEntry.getCreatedAt()));
+        Label createdLabel = new Label("Created  " + DateTimeUtils.format(contextEntry.getCreatedAt()));
         createdLabel.getStyleClass().add("card-meta");
 
-        Label updatedLabel = new Label("Updated: " + DateTimeUtils.format(contextEntry.getUpdatedAt()));
+        Label updatedLabel = new Label("Updated  " + DateTimeUtils.format(contextEntry.getUpdatedAt()));
         updatedLabel.getStyleClass().add("card-meta");
 
-        Button openButton = createActionButton("Open", "fas-play");
-        openButton.getStyleClass().add("primary-button");
+        Button openButton = ButtonFactory.primary("Open", "fas-play", "Restore this context");
         openButton.setOnAction(event -> restoreContext(contextEntry));
 
-        Button editButton = createActionButton("Edit", "fas-pen");
+        Button editButton = ButtonFactory.secondary("Edit", "fas-pen", "Edit context details");
         editButton.setOnAction(event -> coordinator.editContext(contextEntry.copy()));
 
-        Button deleteButton = createActionButton("Delete", "fas-trash");
-        deleteButton.getStyleClass().add("danger-button");
+        Button deleteButton = ButtonFactory.danger("Delete", "fas-trash", "Delete this context");
         deleteButton.setOnAction(event -> deleteContext(contextEntry));
 
-        HBox actions = new HBox(10, openButton, editButton, deleteButton);
-        HBox topRow = new HBox(12, branchChip);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        VBox card = new VBox(12, topRow, titleLabel, branchLabel, pathLabel, notePreview, createdLabel, updatedLabel, actions);
+        HBox topRow = new HBox(8, branchChip, statusChip);
+        HBox metaRow = new HBox(14, createdLabel, updatedLabel);
+        HBox actions = new HBox(8, openButton, editButton, spacer, deleteButton);
+        actions.getStyleClass().add("card-actions");
+
+        Region divider = new Region();
+        divider.getStyleClass().add("card-divider");
+
+        VBox card = new VBox(12, topRow, titleLabel, branchLabel, pathLabel, notePreview, divider, metaRow, actions);
         card.getStyleClass().add("context-card");
         card.setPadding(new Insets(20));
-        card.setPrefWidth(340);
+        card.setPrefWidth(360);
         card.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> AnimationUtils.pulse(card));
         return card;
-    }
-
-    private Button createActionButton(String text, String iconLiteral) {
-        Button button = new Button(text, new FontIcon(iconLiteral));
-        button.getStyleClass().add("secondary-button");
-        return button;
     }
 
     private void restoreContext(ContextEntry contextEntry) {
@@ -140,8 +144,10 @@ public class DashboardController {
             Stage dialogStage = new Stage();
             dialogStage.initOwner(ownerStage);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
             dialogStage.setTitle("Restore Context");
-            Scene scene = new Scene(root, 680, 520);
+            Scene scene = new Scene(root, 720, 640);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             coordinator.getSettingsService().applyTheme(scene, coordinator.getSettingsService().loadSettings());
             dialogStage.setScene(scene);
             dialogStage.showAndWait();
@@ -175,7 +181,7 @@ public class DashboardController {
     }
 
     private String blankFallback(String value) {
-        return value == null || value.isBlank() ? "Not specified" : value;
+        return value == null || value.isBlank() ? "unspecified" : value;
     }
 
     private String buildPreview(String value, String fallback) {

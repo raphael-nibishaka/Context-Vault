@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -13,7 +15,11 @@
                 <Insets top="26" right="26" bottom="26" left="26" />
             </padding>
             <children>
-                <Label text="CV" styleClass="about-logo" />
+                <ImageView fitWidth="84" fitHeight="84" preserveRatio="true" smooth="true" styleClass="about-logo-image">
+                    <image>
+                        <Image url="@../images/context-vault-logo.png" />
+                    </image>
+                </ImageView>
                 <Label fx:id="appNameLabel" styleClass="section-title" />
                 <Label fx:id="taglineLabel" styleClass="section-subtitle" wrapText="true" />
                 <Label fx:id="versionLabel" styleClass="about-meta" />
