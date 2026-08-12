@@ -260,3 +260,92 @@
     -fx-border-color: rgba(252, 165, 165, 0.8);
     -fx-text-fill: #B91C1C;
 }
+
+.restore-dialog-subtitle {
+    -fx-text-fill: #64748B;
+}
+
+.restore-status-success {
+    -fx-background-color: linear-gradient(to right, rgba(220, 252, 231, 0.95), rgba(224, 242, 254, 0.85));
+    -fx-border-color: rgba(74, 222, 128, 0.45);
+}
+
+.restore-status-success .restore-status-icon {
+    -fx-background-color: rgba(220, 252, 231, 0.95);
+    -fx-border-color: rgba(74, 222, 128, 0.55);
+    -fx-text-fill: #15803D;
+}
+
+.restore-status-success .restore-status-headline {
+    -fx-text-fill: #14532D;
+}
+
+.restore-status-success .restore-status-message {
+    -fx-text-fill: #166534;
+}
+
+.restore-status-warning {
+    -fx-background-color: linear-gradient(to right, rgba(254, 243, 199, 0.95), rgba(254, 226, 226, 0.85));
+    -fx-border-color: rgba(251, 191, 36, 0.45);
+}
+
+.restore-status-warning .restore-status-icon {
+    -fx-background-color: rgba(254, 243, 199, 0.95);
+    -fx-border-color: rgba(251, 191, 36, 0.55);
+    -fx-text-fill: #B45309;
+}
+
+.restore-status-warning .restore-status-headline {
+    -fx-text-fill: #92400E;
+}
+
+.restore-status-warning .restore-status-message {
+    -fx-text-fill: #A16207;
+}
+
+.restore-meta-label {
+    -fx-text-fill: #0369A1;
+}
+
+.restore-meta-value {
+    -fx-text-fill: #0F172A;
+}
+
+.restore-path-value {
+    -fx-text-fill: #475569;
+}
+
+.restore-branch-chip {
+    -fx-background-color: rgba(224, 242, 254, 0.95);
+    -fx-border-color: rgba(125, 211, 252, 0.75);
+    -fx-text-fill: #0369A1;
+}
+
+.restore-branch-chip-active {
+    -fx-background-color: rgba(220, 252, 231, 0.95);
+    -fx-border-color: rgba(74, 222, 128, 0.55);
+    -fx-text-fill: #15803D;
+}
+
+.restore-actions-summary {
+    -fx-text-fill: #475569;
+}
+
+.restore-warning-panel {
+    -fx-background-color: rgba(254, 226, 226, 0.75);
+    -fx-border-color: rgba(252, 165, 165, 0.55);
+}
+
+.restore-warning-text {
+    -fx-text-fill: #B91C1C;
+}
+
+.text-area.restore-text-block {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: rgba(148, 163, 184, 0.28);
+    -fx-text-fill: #0F172A;
+}
+
+.text-area.restore-text-block .content {
+    -fx-background-color: rgba(248, 250, 252, 0.95);
+}

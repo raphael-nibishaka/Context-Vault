@@ -26,7 +26,6 @@ import utils.DateTimeUtils;
 import utils.DialogUtils;
 
 import java.io.IOException;
-import java.util.StringJoiner;
 
 public class DashboardController {
     @FXML
@@ -139,14 +138,14 @@ public class DashboardController {
             Parent root = loader.load();
 
             RestoreDialogController controller = loader.getController();
-            controller.initialize(coordinator, contextEntry, buildWarningText(result));
+            controller.initialize(coordinator, contextEntry, result);
 
             Stage dialogStage = new Stage();
             dialogStage.initOwner(ownerStage);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
             dialogStage.setTitle("Restore Context");
-            Scene scene = new Scene(root, 720, 640);
+            Scene scene = new Scene(root, 760, 720);
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             coordinator.getSettingsService().applyTheme(scene, coordinator.getSettingsService().loadSettings());
             dialogStage.setScene(scene);
@@ -154,15 +153,6 @@ public class DashboardController {
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to open restore dialog", exception);
         }
-    }
-
-    private String buildWarningText(RestoreResult result) {
-        if (!result.hasWarnings()) {
-            return "";
-        }
-        StringJoiner joiner = new StringJoiner(System.lineSeparator());
-        result.getWarnings().forEach(joiner::add);
-        return joiner.toString();
     }
 
     private void deleteContext(ContextEntry contextEntry) {

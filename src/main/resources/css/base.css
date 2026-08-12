@@ -398,3 +398,109 @@
 .ghost-button:pressed {
     -fx-translate-y: 1px;
 }
+
+.restore-dialog {
+    -fx-min-width: 560px;
+}
+
+.restore-dialog-subtitle {
+    -fx-font-size: 11px;
+}
+
+.restore-scroll-pane,
+.restore-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.restore-scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.restore-dialog-body {
+    -fx-spacing: 18px;
+}
+
+.restore-status-banner {
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-padding: 14 16 14 16;
+}
+
+.restore-status-icon {
+    -fx-min-width: 38px;
+    -fx-min-height: 38px;
+    -fx-max-width: 38px;
+    -fx-max-height: 38px;
+    -fx-alignment: center;
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1px;
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+}
+
+.restore-status-headline {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.restore-status-message {
+    -fx-font-size: 13px;
+    -fx-line-spacing: 2px;
+}
+
+.restore-info-card {
+    -fx-spacing: 0;
+}
+
+.restore-meta-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.restore-meta-value {
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+}
+
+.restore-path-value {
+    -fx-font-size: 12px;
+    -fx-font-family: "Cascadia Code", "Consolas", monospace;
+    -fx-line-spacing: 2px;
+}
+
+.restore-branch-chip {
+    -fx-background-radius: 999px;
+    -fx-border-radius: 999px;
+    -fx-border-width: 1px;
+    -fx-padding: 5 12 5 12;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-font-family: "Cascadia Code", "Consolas", monospace;
+    -fx-alignment: CENTER_LEFT;
+    -fx-max-width: Infinity;
+}
+
+.restore-actions-summary,
+.restore-warning-text {
+    -fx-font-size: 13px;
+    -fx-line-spacing: 4px;
+}
+
+.restore-text-block {
+    -fx-font-family: "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+}
+
+.text-area.restore-text-block .content {
+    -fx-background-radius: 12px;
+}
+
+.text-area,
+.text-area .content,
+.text-area .scroll-pane,
+.text-area .scroll-pane .viewport {
+    -fx-background-insets: 0;
+}
