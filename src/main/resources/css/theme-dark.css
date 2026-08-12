@@ -261,3 +261,96 @@
     -fx-border-color: rgba(252, 165, 165, 0.4);
     -fx-text-fill: #FCA5A5;
 }
+
+.restore-dialog-subtitle {
+    -fx-text-fill: #94A3B8;
+}
+
+.restore-status-success {
+    -fx-background-color: linear-gradient(to right, rgba(34, 197, 94, 0.16), rgba(56, 189, 248, 0.08));
+    -fx-border-color: rgba(74, 222, 128, 0.35);
+}
+
+.restore-status-success .restore-status-icon {
+    -fx-background-color: rgba(34, 197, 94, 0.18);
+    -fx-border-color: rgba(74, 222, 128, 0.42);
+    -fx-text-fill: #86EFAC;
+}
+
+.restore-status-success .restore-status-headline {
+    -fx-text-fill: #ECFDF5;
+}
+
+.restore-status-success .restore-status-message {
+    -fx-text-fill: #BBF7D0;
+}
+
+.restore-status-warning {
+    -fx-background-color: linear-gradient(to right, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.08));
+    -fx-border-color: rgba(251, 191, 36, 0.35);
+}
+
+.restore-status-warning .restore-status-icon {
+    -fx-background-color: rgba(245, 158, 11, 0.18);
+    -fx-border-color: rgba(251, 191, 36, 0.42);
+    -fx-text-fill: #FCD34D;
+}
+
+.restore-status-warning .restore-status-headline {
+    -fx-text-fill: #FFFBEB;
+}
+
+.restore-status-warning .restore-status-message {
+    -fx-text-fill: #FDE68A;
+}
+
+.restore-meta-label {
+    -fx-text-fill: #7DD3FC;
+}
+
+.restore-meta-value {
+    -fx-text-fill: #F8FAFC;
+}
+
+.restore-path-value {
+    -fx-text-fill: #CBD5E1;
+}
+
+.restore-branch-chip {
+    -fx-background-color: rgba(56, 189, 248, 0.12);
+    -fx-border-color: rgba(125, 211, 252, 0.28);
+    -fx-text-fill: #BAE6FD;
+}
+
+.restore-branch-chip-active {
+    -fx-background-color: rgba(34, 197, 94, 0.14);
+    -fx-border-color: rgba(74, 222, 128, 0.34);
+    -fx-text-fill: #BBF7D0;
+}
+
+.restore-actions-summary {
+    -fx-text-fill: #CBD5E1;
+}
+
+.restore-warning-panel {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: rgba(252, 165, 165, 0.28);
+    -fx-border-width: 1px;
+    -fx-padding: 12 14 12 14;
+}
+
+.restore-warning-text {
+    -fx-text-fill: #FCA5A5;
+}
+
+.text-area.restore-text-block {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-border-color: rgba(255, 255, 255, 0.14);
+    -fx-text-fill: #E2E8F0;
+}
+
+.text-area.restore-text-block .content {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+}

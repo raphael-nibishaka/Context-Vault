@@ -14,6 +14,7 @@ import utils.ButtonFactory;
 import utils.DialogUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class ContextFormController {
     @FXML
@@ -69,7 +70,11 @@ public class ContextFormController {
         chooser.setTitle("Choose Project Folder");
         File directory = chooser.showDialog(ownerStage);
         if (directory != null) {
-            projectPathField.setText(directory.getAbsolutePath());
+            String absolutePath = directory.getAbsolutePath();
+            projectPathField.setText(absolutePath);
+            coordinator.getRestoreService()
+                    .detectGitBranch(Path.of(absolutePath))
+                    .ifPresent(branch -> gitBranchField.setText(branch));
         }
     }
 

@@ -63,7 +63,16 @@ src/main/resources
 
 ## Restore Behavior
 
-Version 1 does not execute saved commands automatically. It opens the project directory, launches the configured editor and terminal, and presents the saved commands and notes in a restore dialog.
+When you click **Open**, Context Vault automatically:
+
+- Detects and validates the saved project folder
+- Detects the current Git branch and switches to the saved branch when possible
+- Opens the project folder in Explorer
+- Opens the project in VS Code
+- Opens your configured terminal in the project folder
+- Starts saved commands in that terminal
+
+If VS Code is unavailable, the app falls back to your configured editor from Settings.
 
 ## Notes
 
