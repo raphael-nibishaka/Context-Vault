@@ -33,8 +33,9 @@ public class ServiceContainer {
 
         ContextService contextService = new ContextService(contextRepository);
         SettingsService settingsService = new SettingsService(settingsRepository, themeManager);
+        GitService gitService = new GitService();
         ExternalLaunchService externalLaunchService = new ExternalLaunchService();
-        RestoreService restoreService = new RestoreService(externalLaunchService, settingsService);
+        RestoreService restoreService = new RestoreService(externalLaunchService, settingsService, gitService);
         ClipboardService clipboardService = new ClipboardService();
 
         MainViewModel mainViewModel = new MainViewModel();
