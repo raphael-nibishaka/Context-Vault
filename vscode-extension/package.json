@@ -1,0 +1,79 @@
+{
+  "name": "context-vault",
+  "displayName": "Context Vault",
+  "description": "Saves and restores open tabs and cursor positions so Context Vault can bring you back into flow.",
+  "version": "1.0.0",
+  "publisher": "contextvault",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raphael-nibishaka/Context-Vault.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "context",
+    "tabs",
+    "cursor",
+    "restore",
+    "session",
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "contextVault.saveEditorSession",
+        "title": "Context Vault: Save Editor Session"
+      },
+      {
+        "command": "contextVault.restoreEditorSession",
+        "title": "Context Vault: Restore Editor Session"
+      },
+      {
+        "command": "contextVault.clearEditorSession",
+        "title": "Context Vault: Clear Saved Session"
+      }
+    ],
+    "configuration": {
+      "title": "Context Vault",
+      "properties": {
+        "contextVault.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save open tabs and cursor positions while you work."
+        },
+        "contextVault.autoRestore": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically restore saved tabs and cursor positions when a project is opened."
+        },
+        "contextVault.saveDelayMs": {
+          "type": "number",
+          "default": 750,
+          "minimum": 100,
+          "description": "Debounce delay (ms) before auto-saving editor session changes."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.24.0",
+    "typescript": "^5.4.5"
+  }
+}
