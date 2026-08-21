@@ -10,6 +10,7 @@ Context Vault is a Java 21 + JavaFX desktop application for saving and restoring
 - Restore a context by opening the folder, launching the configured editor, opening a terminal, and showing saved commands and notes
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
+- **V3:** VS Code / Cursor extension that detects open tabs, saves cursor positions, and restores them when the project reopens
 
 ## Tech Stack
 
@@ -59,6 +60,10 @@ src/main/resources
 ├── fxml
 ├── icons
 └── images
+
+vscode-extension
+├── src
+└── README.md
 ```
 
 ## Restore Behavior
@@ -73,6 +78,29 @@ When you click **Open**, Context Vault automatically:
 - Starts saved commands in that terminal
 
 If VS Code is unavailable, the app falls back to your configured editor from Settings.
+
+## V3 — VS Code Extension
+
+The companion extension in `vscode-extension/` makes restore smoother by remembering editor state:
+
+- Detects open tabs across editor groups
+- Saves cursor positions, selections, and visible ranges
+- Restores them automatically when the project is reopened
+
+### Install the extension
+
+```bash
+cd vscode-extension
+npm install
+npm run compile
+npx vsce package --no-dependencies
+```
+
+In VS Code or Cursor: **Extensions → … → Install from VSIX…** and choose the generated `.vsix`.
+
+See [`vscode-extension/README.md`](vscode-extension/README.md) for commands and settings.
+
+Session data is stored at `.context-vault/editor-session.json` inside each project.
 
 ## Notes
 

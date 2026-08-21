@@ -24,7 +24,7 @@
                 <Label fx:id="taglineLabel" styleClass="section-subtitle" wrapText="true" />
                 <Label fx:id="versionLabel" styleClass="about-meta" />
                 <Label fx:id="developerLabel" styleClass="about-meta" />
-                <Label text="Context Vault is a polished workspace memory layer for developers. It keeps the branch, folder, commands, and notes that disappear when real work gets interrupted." wrapText="true" styleClass="about-description" />
+                <Label text="Context Vault is a polished workspace memory layer for developers. It keeps the branch, folder, commands, and notes that disappear when real work gets interrupted. Pair it with the Context Vault VS Code extension to restore open tabs and cursor positions automatically." wrapText="true" styleClass="about-description" />
             </children>
         </VBox>
     </children>
