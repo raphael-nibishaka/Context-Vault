@@ -40,7 +40,7 @@ public class ServiceContainer {
 
         MainViewModel mainViewModel = new MainViewModel();
         DashboardViewModel dashboardViewModel = new DashboardViewModel(contextService);
-        ContextFormViewModel contextFormViewModel = new ContextFormViewModel(contextService);
+        ContextFormViewModel contextFormViewModel = new ContextFormViewModel(contextService, gitService);
         SettingsViewModel settingsViewModel = new SettingsViewModel(settingsService);
 
         applicationCoordinator = new ApplicationCoordinator(
@@ -51,6 +51,7 @@ public class ServiceContainer {
                 contextService,
                 settingsService,
                 restoreService,
+                gitService,
                 clipboardService,
                 themeManager
         );

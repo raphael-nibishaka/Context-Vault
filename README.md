@@ -2,15 +2,45 @@
 
 Context Vault is a Java 21 + JavaFX desktop application for saving and restoring developer work context.
 
+## Product Roadmap
+
+### V1 — Manual Context Saver
+
+Prove the basic idea: developers manually save everything they need to resume work.
+
+- Context name, project name, project path
+- Git repository path and branch
+- Open files, development commands, notes, tags
+- Created/updated timestamps
+- Dashboard cards with **Restore**, **Edit**, and **Delete**
+
+### V2 — Git Intelligence
+
+Stop asking for information the computer already knows.
+
+- Detect whether a folder is a Git repository
+- Auto-fill repository name, branch, remote URL, current commit, and last commit message
+- Show modified, untracked, and staged files
+- **Refresh Git** button in the context form
+
+### V3 — Workspace Restoration
+
+Reconstruct the workspace instead of only showing saved information.
+
+- Restore project folder, Git branch, VS Code/Cursor, saved files, terminal, browser URLs, and notes
+- Show a restore checklist: Project, Git, VS Code, Files, Terminal, Browser, Notes
+- Commands are **not** auto-run — use **Run All** in the restore dialog for safety
+- VS Code extension saves/restores open tabs and cursor positions
+
 ## Features
 
 - Save project contexts with name, folder, branch, commands, and notes
 - Browse and search saved contexts instantly
 - Edit or delete existing contexts
-- Restore a context by opening the folder, launching the configured editor, opening a terminal, and showing saved commands and notes
+- Restore a workspace with a step-by-step checklist
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
-- **V3:** VS Code / Cursor extension that detects open tabs, saves cursor positions, and restores them when the project reopens
+- VS Code / Cursor extension for editor tab and cursor restoration
 
 ## Tech Stack
 
@@ -68,14 +98,17 @@ vscode-extension
 
 ## Restore Behavior
 
-When you click **Open**, Context Vault automatically:
+When you click **Restore**, Context Vault:
 
-- Detects and validates the saved project folder
-- Detects the current Git branch and switches to the saved branch when possible
 - Opens the project folder in Explorer
-- Opens the project in VS Code
-- Opens your configured terminal in the project folder
-- Starts saved commands in that terminal
+- Switches to the saved Git branch when possible
+- Opens VS Code or Cursor
+- Opens saved files in the editor
+- Opens a terminal in the project folder
+- Opens saved browser URLs
+- Shows your notes and detected commands
+
+Commands are shown in the restore dialog. Click **Run All** when you are ready to execute them.
 
 If VS Code is unavailable, the app falls back to your configured editor from Settings.
 

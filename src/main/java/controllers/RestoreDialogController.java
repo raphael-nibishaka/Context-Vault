@@ -12,6 +12,7 @@ import models.ContextEntry;
 import services.ApplicationCoordinator;
 import services.RestoreResult;
 import utils.ButtonFactory;
+import utils.DialogUtils;
 import viewmodels.RestoreDialogViewModel;
 
 public class RestoreDialogController {
@@ -32,9 +33,7 @@ public class RestoreDialogController {
     @FXML
     private Label statusMessageLabel;
     @FXML
-    private VBox actionsPanel;
-    @FXML
-    private Label actionsSummaryLabel;
+    private Label restoreChecklistLabel;
     @FXML
     private VBox warningsPanel;
     @FXML
@@ -46,15 +45,19 @@ public class RestoreDialogController {
     @FXML
     private Button copyCommandsButton;
     @FXML
+    private Button runAllButton;
+    @FXML
     private Button closeButton;
     @FXML
     private Button headerCloseButton;
 
     private final RestoreDialogViewModel viewModel = new RestoreDialogViewModel();
     private ApplicationCoordinator coordinator;
+    private ContextEntry contextEntry;
 
     public void initialize(ApplicationCoordinator coordinator, ContextEntry contextEntry, RestoreResult restoreResult) {
         this.coordinator = coordinator;
+        this.contextEntry = contextEntry;
         viewModel.setContext(contextEntry, restoreResult);
 
         projectNameLabel.textProperty().bind(viewModel.projectNameProperty());
@@ -63,22 +66,24 @@ public class RestoreDialogController {
         projectPathLabel.textProperty().bind(viewModel.projectPathProperty());
         statusHeadlineLabel.textProperty().bind(viewModel.statusHeadlineProperty());
         statusMessageLabel.textProperty().bind(viewModel.statusMessageProperty());
-        actionsSummaryLabel.textProperty().bind(viewModel.actionsSummaryProperty());
+        restoreChecklistLabel.textProperty().bind(viewModel.restoreChecklistProperty());
         commandsArea.textProperty().bind(viewModel.commandsProperty());
         notesArea.textProperty().bind(viewModel.notesProperty());
         warningsLabel.textProperty().bind(viewModel.warningsProperty());
 
-        actionsPanel.managedProperty().bind(actionsPanel.visibleProperty());
-        actionsPanel.visibleProperty().bind(viewModel.actionsSummaryProperty().isNotEmpty());
         warningsPanel.managedProperty().bind(warningsPanel.visibleProperty());
         warningsPanel.visibleProperty().bind(viewModel.warningsProperty().isNotEmpty());
+        runAllButton.managedProperty().bind(runAllButton.visibleProperty());
+        runAllButton.visibleProperty().bind(viewModel.hasCommandsProperty());
 
         viewModel.hasWarningsProperty().addListener((observable, oldValue, hasWarnings) -> applyStatusStyle(hasWarnings));
         applyStatusStyle(viewModel.hasWarningsProperty().get());
 
         ButtonFactory.decorate(copyCommandsButton, "fas-copy");
+        ButtonFactory.decorate(runAllButton, "fas-play");
         ButtonFactory.decorate(closeButton, "fas-check");
         copyCommandsButton.setTooltip(new Tooltip("Copy saved commands to clipboard"));
+        runAllButton.setTooltip(new Tooltip("Run all saved commands in the terminal"));
         closeButton.setTooltip(new Tooltip("Close restore panel"));
         if (headerCloseButton != null) {
             headerCloseButton.setTooltip(new Tooltip("Close"));
@@ -99,6 +104,33 @@ public class RestoreDialogController {
     @FXML
     private void onCopyCommands() {
         coordinator.getClipboardService().copyText(commandsArea.getText());
+    }
+
+    @FXML
+    private void onRunAllCommands() {
+        try {
+            coordinator.getRestoreService().runSavedCommands(contextEntry);
+            DialogUtils.showInfo(
+                    (Stage) projectNameLabel.getScene().getWindow(),
+                    "Commands Started",
+                    "Saved commands launched",
+                    "Your saved commands were started in the configured terminal."
+            );
+        } catch (IllegalArgumentException exception) {
+            DialogUtils.showError(
+                    (Stage) projectNameLabel.getScene().getWindow(),
+                    "No Commands",
+                    "Nothing to run",
+                    exception.getMessage()
+            );
+        } catch (Exception exception) {
+            DialogUtils.showError(
+                    (Stage) projectNameLabel.getScene().getWindow(),
+                    "Run Failed",
+                    "Unable to start commands",
+                    exception.getMessage()
+            );
+        }
     }
 
     @FXML

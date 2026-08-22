@@ -1,5 +1,8 @@
 package services;
 
+import models.RestoreStep;
+import models.RestoreStepStatus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,11 +10,13 @@ import java.util.List;
 public class RestoreResult {
     private final List<String> warnings = new ArrayList<>();
     private final List<String> infoMessages = new ArrayList<>();
+    private final List<RestoreStep> steps = new ArrayList<>();
     private String detectedProjectPath = "";
     private String detectedGitBranch = "";
     private String targetGitBranch = "";
     private boolean branchSwitched;
-    private int commandsStarted;
+    private int filesOpened;
+    private int browserTabsOpened;
 
     public void addWarning(String warning) {
         warnings.add(warning);
@@ -19,6 +24,10 @@ public class RestoreResult {
 
     public void addInfo(String info) {
         infoMessages.add(info);
+    }
+
+    public void addStep(String label, RestoreStepStatus status) {
+        steps.add(new RestoreStep(label, status));
     }
 
     public boolean hasWarnings() {
@@ -31,6 +40,10 @@ public class RestoreResult {
 
     public List<String> getInfoMessages() {
         return Collections.unmodifiableList(infoMessages);
+    }
+
+    public List<RestoreStep> getSteps() {
+        return Collections.unmodifiableList(steps);
     }
 
     public String getDetectedProjectPath() {
@@ -65,11 +78,19 @@ public class RestoreResult {
         this.branchSwitched = branchSwitched;
     }
 
-    public int getCommandsStarted() {
-        return commandsStarted;
+    public int getFilesOpened() {
+        return filesOpened;
     }
 
-    public void setCommandsStarted(int commandsStarted) {
-        this.commandsStarted = commandsStarted;
+    public void setFilesOpened(int filesOpened) {
+        this.filesOpened = filesOpened;
+    }
+
+    public int getBrowserTabsOpened() {
+        return browserTabsOpened;
+    }
+
+    public void setBrowserTabsOpened(int browserTabsOpened) {
+        this.browserTabsOpened = browserTabsOpened;
     }
 }
