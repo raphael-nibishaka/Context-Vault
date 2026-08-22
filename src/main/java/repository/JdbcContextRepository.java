@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcContextRepository implements ContextRepository {
+    private static final String SELECT_COLUMNS = """
+            id, name, project_name, project_path, git_repo_path, git_branch,
+            open_files, note, commands, tags, browser_urls, created_at, updated_at
+            """;
+
     private final ConnectionFactory connectionFactory;
 
     public JdbcContextRepository(ConnectionFactory connectionFactory) {
@@ -24,10 +29,10 @@ public class JdbcContextRepository implements ContextRepository {
     @Override
     public List<ContextEntry> findAll() {
         String sql = """
-                SELECT id, name, project_path, git_branch, note, commands, created_at, updated_at
+                SELECT %s
                 FROM contexts
                 ORDER BY updated_at DESC
-                """;
+                """.formatted(SELECT_COLUMNS);
 
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -49,13 +54,15 @@ public class JdbcContextRepository implements ContextRepository {
         }
 
         String sql = """
-                SELECT id, name, project_path, git_branch, note, commands, created_at, updated_at
+                SELECT %s
                 FROM contexts
                 WHERE lower(name) LIKE lower(?)
+                   OR lower(coalesce(project_name, '')) LIKE lower(?)
                    OR lower(project_path) LIKE lower(?)
                    OR lower(coalesce(git_branch, '')) LIKE lower(?)
+                   OR lower(coalesce(tags, '')) LIKE lower(?)
                 ORDER BY updated_at DESC
-                """;
+                """.formatted(SELECT_COLUMNS);
 
         String like = "%" + query.trim() + "%";
         try (Connection connection = connectionFactory.getConnection();
@@ -63,6 +70,8 @@ public class JdbcContextRepository implements ContextRepository {
             statement.setString(1, like);
             statement.setString(2, like);
             statement.setString(3, like);
+            statement.setString(4, like);
+            statement.setString(5, like);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 List<ContextEntry> results = new ArrayList<>();
@@ -79,10 +88,10 @@ public class JdbcContextRepository implements ContextRepository {
     @Override
     public Optional<ContextEntry> findById(long id) {
         String sql = """
-                SELECT id, name, project_path, git_branch, note, commands, created_at, updated_at
+                SELECT %s
                 FROM contexts
                 WHERE id = ?
-                """;
+                """.formatted(SELECT_COLUMNS);
 
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -101,8 +110,11 @@ public class JdbcContextRepository implements ContextRepository {
     @Override
     public ContextEntry save(ContextEntry contextEntry) {
         String sql = """
-                INSERT INTO contexts(name, project_path, git_branch, note, commands, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO contexts(
+                    name, project_name, project_path, git_repo_path, git_branch,
+                    open_files, note, commands, tags, browser_urls, created_at, updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         LocalDateTime now = LocalDateTime.now();
@@ -129,7 +141,9 @@ public class JdbcContextRepository implements ContextRepository {
     public ContextEntry update(ContextEntry contextEntry) {
         String sql = """
                 UPDATE contexts
-                SET name = ?, project_path = ?, git_branch = ?, note = ?, commands = ?, created_at = ?, updated_at = ?
+                SET name = ?, project_name = ?, project_path = ?, git_repo_path = ?, git_branch = ?,
+                    open_files = ?, note = ?, commands = ?, tags = ?, browser_urls = ?,
+                    created_at = ?, updated_at = ?
                 WHERE id = ?
                 """;
 
@@ -138,7 +152,7 @@ public class JdbcContextRepository implements ContextRepository {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             bind(statement, contextEntry);
-            statement.setLong(8, contextEntry.getId());
+            statement.setLong(13, contextEntry.getId());
             statement.executeUpdate();
             return contextEntry;
         } catch (SQLException exception) {
@@ -161,22 +175,32 @@ public class JdbcContextRepository implements ContextRepository {
 
     private void bind(PreparedStatement statement, ContextEntry contextEntry) throws SQLException {
         statement.setString(1, contextEntry.getName());
-        statement.setString(2, contextEntry.getProjectPath());
-        statement.setString(3, contextEntry.getGitBranch());
-        statement.setString(4, contextEntry.getNote());
-        statement.setString(5, contextEntry.getCommands());
-        statement.setString(6, toTimestamp(contextEntry.getCreatedAt()).toString());
-        statement.setString(7, toTimestamp(contextEntry.getUpdatedAt()).toString());
+        statement.setString(2, contextEntry.getProjectName());
+        statement.setString(3, contextEntry.getProjectPath());
+        statement.setString(4, contextEntry.getGitRepoPath());
+        statement.setString(5, contextEntry.getGitBranch());
+        statement.setString(6, contextEntry.getOpenFiles());
+        statement.setString(7, contextEntry.getNote());
+        statement.setString(8, contextEntry.getCommands());
+        statement.setString(9, contextEntry.getTags());
+        statement.setString(10, contextEntry.getBrowserUrls());
+        statement.setString(11, toTimestamp(contextEntry.getCreatedAt()).toString());
+        statement.setString(12, toTimestamp(contextEntry.getUpdatedAt()).toString());
     }
 
     private ContextEntry map(ResultSet resultSet) throws SQLException {
         return new ContextEntry(
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
+                resultSet.getString("project_name"),
                 resultSet.getString("project_path"),
+                resultSet.getString("git_repo_path"),
                 resultSet.getString("git_branch"),
+                resultSet.getString("open_files"),
                 resultSet.getString("note"),
                 resultSet.getString("commands"),
+                resultSet.getString("tags"),
+                resultSet.getString("browser_urls"),
                 parseDateTime(resultSet.getString("created_at")),
                 parseDateTime(resultSet.getString("updated_at"))
         );

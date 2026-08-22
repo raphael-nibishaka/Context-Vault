@@ -22,8 +22,10 @@ import services.ApplicationCoordinator;
 import services.RestoreResult;
 import utils.AnimationUtils;
 import utils.ButtonFactory;
+import utils.CommandParser;
 import utils.DateTimeUtils;
 import utils.DialogUtils;
+import utils.FileListParser;
 
 import java.io.IOException;
 
@@ -72,14 +74,17 @@ public class DashboardController {
         Label branchChip = new Label(blankFallback(contextEntry.getGitBranch()));
         branchChip.getStyleClass().add("branch-chip");
 
-        Label statusChip = new Label("LOCAL");
-        statusChip.getStyleClass().add("branch-chip");
+        int fileCount = FileListParser.count(contextEntry.getOpenFiles());
+        int commandCount = CommandParser.parse(contextEntry.getCommands()).size();
+        Label statsChip = new Label(fileCount + " file" + (fileCount == 1 ? "" : "s")
+                + " • " + commandCount + " command" + (commandCount == 1 ? "" : "s"));
+        statsChip.getStyleClass().add("branch-chip");
 
         Label titleLabel = new Label(contextEntry.getName());
         titleLabel.getStyleClass().add("card-title");
 
-        Label branchLabel = new Label("BRANCH");
-        branchLabel.getStyleClass().add("card-label");
+        Label projectLabel = new Label(blankFallback(contextEntry.getProjectName()));
+        projectLabel.getStyleClass().add("card-subtitle");
 
         Label pathLabel = new Label(contextEntry.getProjectPath());
         pathLabel.getStyleClass().add("card-path");
@@ -89,14 +94,11 @@ public class DashboardController {
         notePreview.getStyleClass().add("card-note");
         notePreview.setWrapText(true);
 
-        Label createdLabel = new Label("Created  " + DateTimeUtils.format(contextEntry.getCreatedAt()));
-        createdLabel.getStyleClass().add("card-meta");
-
         Label updatedLabel = new Label("Updated  " + DateTimeUtils.format(contextEntry.getUpdatedAt()));
         updatedLabel.getStyleClass().add("card-meta");
 
-        Button openButton = ButtonFactory.primary("Open", "fas-play", "Restore this context");
-        openButton.setOnAction(event -> restoreContext(contextEntry));
+        Button restoreButton = ButtonFactory.primary("Restore", "fas-play", "Restore this workspace");
+        restoreButton.setOnAction(event -> restoreContext(contextEntry));
 
         Button editButton = ButtonFactory.secondary("Edit", "fas-pen", "Edit context details");
         editButton.setOnAction(event -> coordinator.editContext(contextEntry.copy()));
@@ -107,15 +109,14 @@ public class DashboardController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox topRow = new HBox(8, branchChip, statusChip);
-        HBox metaRow = new HBox(14, createdLabel, updatedLabel);
-        HBox actions = new HBox(8, openButton, editButton, spacer, deleteButton);
+        HBox topRow = new HBox(8, branchChip, statsChip);
+        HBox actions = new HBox(8, restoreButton, editButton, spacer, deleteButton);
         actions.getStyleClass().add("card-actions");
 
         Region divider = new Region();
         divider.getStyleClass().add("card-divider");
 
-        VBox card = new VBox(12, topRow, titleLabel, branchLabel, pathLabel, notePreview, divider, metaRow, actions);
+        VBox card = new VBox(12, topRow, titleLabel, projectLabel, pathLabel, notePreview, divider, updatedLabel, actions);
         card.getStyleClass().add("context-card");
         card.setPadding(new Insets(20));
         card.setPrefWidth(360);

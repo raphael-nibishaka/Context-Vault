@@ -34,7 +34,7 @@
                         <VBox spacing="2.0">
                             <children>
                                 <Label text="Restore Context" styleClass="glass-alert-title" />
-                                <Label text="Your development environment is being prepared" styleClass="restore-dialog-subtitle" />
+                                <Label text="Reconstructing your development workspace" styleClass="restore-dialog-subtitle" />
                             </children>
                         </VBox>
                         <HBox HBox.hgrow="ALWAYS" />
@@ -88,10 +88,10 @@
                                     </children>
                                 </VBox>
 
-                                <VBox spacing="8.0" fx:id="actionsPanel" styleClass="restore-actions-panel">
+                                <VBox spacing="8.0" styleClass="restore-actions-panel">
                                     <children>
-                                        <Label text="Completed Steps" styleClass="field-label" />
-                                        <Label fx:id="actionsSummaryLabel" styleClass="restore-actions-summary" wrapText="true" />
+                                        <Label text="Restore Progress" styleClass="field-label" />
+                                        <Label fx:id="restoreChecklistLabel" styleClass="restore-actions-summary" wrapText="true" />
                                     </children>
                                 </VBox>
 
@@ -104,7 +104,7 @@
 
                                 <VBox spacing="8.0">
                                     <children>
-                                        <Label text="Saved Commands" styleClass="field-label" />
+                                        <Label text="Commands Detected" styleClass="field-label" />
                                         <TextArea fx:id="commandsArea" editable="false" prefRowCount="5" wrapText="true" styleClass="glass-input, restore-text-block" />
                                     </children>
                                 </VBox>
@@ -126,8 +126,9 @@
                     </padding>
                     <children>
                         <Button fx:id="copyCommandsButton" text="Copy Commands" onAction="#onCopyCommands" styleClass="secondary-button, glass-button" />
+                        <Button fx:id="runAllButton" text="Run All" onAction="#onRunAllCommands" styleClass="primary-button, glass-button" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="closeButton" text="Done" onAction="#onClose" styleClass="primary-button, glass-button" />
+                        <Button fx:id="closeButton" text="Done" onAction="#onClose" styleClass="secondary-button, glass-button" />
                     </children>
                 </HBox>
             </children>

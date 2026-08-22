@@ -5,6 +5,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.ContextEntry;
+import models.RestoreStep;
+import models.RestoreStepStatus;
 import services.RestoreResult;
 
 public class RestoreDialogViewModel {
@@ -16,49 +18,62 @@ public class RestoreDialogViewModel {
     private final StringProperty notes = new SimpleStringProperty();
     private final StringProperty statusHeadline = new SimpleStringProperty();
     private final StringProperty statusMessage = new SimpleStringProperty();
-    private final StringProperty actionsSummary = new SimpleStringProperty();
+    private final StringProperty restoreChecklist = new SimpleStringProperty();
     private final StringProperty warnings = new SimpleStringProperty();
     private final BooleanProperty hasWarnings = new SimpleBooleanProperty();
+    private final BooleanProperty hasCommands = new SimpleBooleanProperty();
 
     public void setContext(ContextEntry contextEntry, RestoreResult restoreResult) {
         projectName.set(safe(contextEntry.getName(), "Untitled context"));
         gitBranch.set(formatBranch(contextEntry.getGitBranch()));
         projectPath.set(safe(contextEntry.getProjectPath(), "No path saved"));
-        commands.set(safe(contextEntry.getCommands(), "No saved commands."));
+        commands.set(safe(contextEntry.getCommands(), ""));
         notes.set(safe(contextEntry.getNote(), "No notes for this context."));
+        hasCommands.set(contextEntry.getCommands() != null && !contextEntry.getCommands().isBlank());
 
         if (restoreResult != null) {
             detectedBranch.set(formatBranch(restoreResult.getDetectedGitBranch()));
             hasWarnings.set(restoreResult.hasWarnings());
-            statusHeadline.set(restoreResult.hasWarnings() ? "Restored with warnings" : "Context restored");
+            statusHeadline.set(restoreResult.hasWarnings() ? "Workspace restored with warnings" : "Workspace restored");
             statusMessage.set(buildStatusMessage(restoreResult));
-            actionsSummary.set(buildActionsSummary(restoreResult));
+            restoreChecklist.set(buildChecklist(restoreResult));
             warnings.set(buildWarnings(restoreResult));
         } else {
             detectedBranch.set("Not detected");
             hasWarnings.set(false);
             statusHeadline.set("Context ready");
             statusMessage.set("Review the saved details below.");
-            actionsSummary.set("");
+            restoreChecklist.set("");
             warnings.set("");
         }
     }
 
     private String buildStatusMessage(RestoreResult restoreResult) {
         if (restoreResult.hasWarnings()) {
-            return "Your workspace was opened, but one or more steps need attention.";
+            return "Your workspace was reconstructed, but one or more steps need attention.";
         }
-        return "Your project folder, editor, and terminal were launched successfully.";
+        return "Project, Git, editor, files, terminal, browser, and notes were restored.";
     }
 
-    private String buildActionsSummary(RestoreResult restoreResult) {
-        if (restoreResult.getInfoMessages().isEmpty()) {
+    private String buildChecklist(RestoreResult restoreResult) {
+        if (restoreResult.getSteps().isEmpty()) {
             return "";
         }
-        return restoreResult.getInfoMessages().stream()
-                .map(message -> "• " + message)
-                .reduce((left, right) -> left + System.lineSeparator() + right)
-                .orElse("");
+        StringBuilder builder = new StringBuilder("Restoring...").append(System.lineSeparator()).append(System.lineSeparator());
+        for (RestoreStep step : restoreResult.getSteps()) {
+            builder.append(formatStep(step)).append(System.lineSeparator());
+        }
+        builder.append(System.lineSeparator()).append("Workspace restored.");
+        return builder.toString().trim();
+    }
+
+    private String formatStep(RestoreStep step) {
+        String icon = switch (step.status()) {
+            case SUCCESS -> "✓";
+            case WARNING -> "!";
+            case SKIPPED -> "–";
+        };
+        return icon + " " + step.label();
     }
 
     private String buildWarnings(RestoreResult restoreResult) {
@@ -117,8 +132,8 @@ public class RestoreDialogViewModel {
         return statusMessage;
     }
 
-    public StringProperty actionsSummaryProperty() {
-        return actionsSummary;
+    public StringProperty restoreChecklistProperty() {
+        return restoreChecklist;
     }
 
     public StringProperty warningsProperty() {
@@ -127,5 +142,9 @@ public class RestoreDialogViewModel {
 
     public BooleanProperty hasWarningsProperty() {
         return hasWarnings;
+    }
+
+    public BooleanProperty hasCommandsProperty() {
+        return hasCommands;
     }
 }

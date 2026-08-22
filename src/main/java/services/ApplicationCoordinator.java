@@ -16,6 +16,7 @@ public class ApplicationCoordinator {
     private final ContextService contextService;
     private final SettingsService settingsService;
     private final RestoreService restoreService;
+    private final GitService gitService;
     private final ClipboardService clipboardService;
     private final ThemeManager themeManager;
 
@@ -26,6 +27,7 @@ public class ApplicationCoordinator {
                                   ContextService contextService,
                                   SettingsService settingsService,
                                   RestoreService restoreService,
+                                  GitService gitService,
                                   ClipboardService clipboardService,
                                   ThemeManager themeManager) {
         this.mainViewModel = mainViewModel;
@@ -35,6 +37,7 @@ public class ApplicationCoordinator {
         this.contextService = contextService;
         this.settingsService = settingsService;
         this.restoreService = restoreService;
+        this.gitService = gitService;
         this.clipboardService = clipboardService;
         this.themeManager = themeManager;
     }
@@ -85,6 +88,10 @@ public class ApplicationCoordinator {
 
     public RestoreService getRestoreService() {
         return restoreService;
+    }
+
+    public GitService getGitService() {
+        return gitService;
     }
 
     public ClipboardService getClipboardService() {

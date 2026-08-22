@@ -3,8 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.Region?>
@@ -21,62 +24,145 @@
             </children>
         </VBox>
 
-        <VBox spacing="18.0" styleClass="form-card">
-            <padding>
-                <Insets top="24" right="24" bottom="24" left="24" />
-            </padding>
-            <children>
-                <VBox spacing="8.0">
+        <ScrollPane fitToWidth="true" styleClass="cards-scroll-pane" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="18.0" styleClass="form-card">
+                    <padding>
+                        <Insets top="24" right="24" bottom="24" left="24" />
+                    </padding>
                     <children>
-                        <Label text="Context Name" styleClass="field-label" />
-                        <TextField fx:id="nameField" promptText="AgriSense Backend" />
-                    </children>
-                </VBox>
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Context Name" styleClass="field-label" />
+                                <TextField fx:id="nameField" promptText="AgriSense Authentication" />
+                            </children>
+                        </VBox>
 
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Project Folder" styleClass="field-label" />
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Project Name" styleClass="field-label" />
+                                <TextField fx:id="projectNameField" promptText="AgriSense" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Project Path" styleClass="field-label" />
+                                <HBox spacing="12.0">
+                                    <children>
+                                        <TextField fx:id="projectPathField" promptText="C:\Projects\AgriSense" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="browseButton" text="Browse" onAction="#onBrowseProjectFolder" styleClass="secondary-button, glass-button" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Git Repository Path" styleClass="field-label" />
+                                <TextField fx:id="gitRepoPathField" promptText="Auto-detected when you browse a Git project" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Git Branch" styleClass="field-label" />
+                                <TextField fx:id="gitBranchField" promptText="feature/authentication" />
+                            </children>
+                        </VBox>
+
+                        <VBox fx:id="gitPanel" spacing="12.0" styleClass="form-card, glass-inset">
+                            <padding>
+                                <Insets top="16" right="16" bottom="16" left="16" />
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                    <children>
+                                        <Label text="Git Intelligence" styleClass="section-subtitle" />
+                                        <Region HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="refreshGitButton" text="Refresh Git" onAction="#onRefreshGit" styleClass="secondary-button, glass-button" />
+                                    </children>
+                                </HBox>
+
+                                <GridPane hgap="16.0" vgap="10.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="120" prefWidth="140" />
+                                        <ColumnConstraints hgrow="ALWAYS" />
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="Repository" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                        <Label fx:id="gitRepositoryNameLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                        <Label text="Remote URL" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                        <Label fx:id="gitRemoteUrlLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                        <Label text="Current Commit" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                        <Label fx:id="gitCurrentCommitLabel" styleClass="dialog-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                                        <Label text="Last Commit" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+                                        <Label fx:id="gitLastCommitLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                        <Label text="Modified" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.valignment="TOP" />
+                                        <Label fx:id="gitModifiedFilesLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                                        <Label text="Untracked" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+                                        <Label fx:id="gitUntrackedFilesLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                                        <Label text="Staged" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+                                        <Label fx:id="gitStagedFilesLabel" styleClass="dialog-value" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Open Files" styleClass="field-label" />
+                                <TextArea fx:id="openFilesArea" prefRowCount="5" promptText="src/auth/AuthService.java&#10;src/auth/JwtService.java" wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Development Commands" styleClass="field-label" />
+                                <TextArea fx:id="commandsArea" prefRowCount="5" promptText="npm run dev&#10;docker compose up" wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Browser URLs" styleClass="field-label" />
+                                <TextArea fx:id="browserUrlsArea" prefRowCount="4" promptText="http://localhost:3000&#10;https://github.com/org/repo" wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Tags" styleClass="field-label" />
+                                <TextField fx:id="tagsField" promptText="auth, backend, api" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label text="Notes" styleClass="field-label" />
+                                <TextArea fx:id="notesArea" prefRowCount="5" promptText="Fix refresh token validation." wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <Label fx:id="validationLabel" styleClass="validation-label" wrapText="true" />
+
                         <HBox spacing="12.0">
                             <children>
-                                <TextField fx:id="projectPathField" promptText="C:\Projects\MyApp" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="browseButton" text="Browse" onAction="#onBrowseProjectFolder" styleClass="secondary-button, glass-button" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel" styleClass="secondary-button, glass-button" />
+                                <Button fx:id="saveButton" text="Save Context" onAction="#onSaveContext" styleClass="primary-button, glass-button" />
                             </children>
                         </HBox>
                     </children>
                 </VBox>
-
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Git Branch" styleClass="field-label" />
-                        <TextField fx:id="gitBranchField" promptText="feature/auth" />
-                    </children>
-                </VBox>
-
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Development Commands" styleClass="field-label" />
-                        <TextArea fx:id="commandsArea" prefRowCount="6" promptText="npm install&#10;npm run dev&#10;docker compose up" wrapText="true" />
-                    </children>
-                </VBox>
-
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Notes" styleClass="field-label" />
-                        <TextArea fx:id="notesArea" prefRowCount="6" promptText="Need to fix JWT refresh token." wrapText="true" />
-                    </children>
-                </VBox>
-
-                <Label fx:id="validationLabel" styleClass="validation-label" wrapText="true" />
-
-                <HBox spacing="12.0">
-                    <children>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="cancelButton" text="Cancel" onAction="#onCancel" styleClass="secondary-button, glass-button" />
-                        <Button fx:id="saveButton" text="Save Context" onAction="#onSaveContext" styleClass="primary-button, glass-button" />
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
+            </content>
+        </ScrollPane>
     </children>
     <padding>
         <Insets top="6" right="6" bottom="6" left="6" />
