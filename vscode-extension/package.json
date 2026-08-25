@@ -1,8 +1,8 @@
 {
   "name": "context-vault",
   "displayName": "Context Vault",
-  "description": "Saves and restores open tabs and cursor positions so Context Vault can bring you back into flow.",
-  "version": "1.0.0",
+  "description": "Detect open tabs, terminals, and Git branch — then save and restore developer contexts from inside VS Code.",
+  "version": "1.1.0",
   "publisher": "contextvault",
   "license": "MIT",
   "repository": {
@@ -21,14 +21,49 @@
     "cursor",
     "restore",
     "session",
-    "workspace"
+    "workspace",
+    "git",
+    "terminals"
   ],
   "activationEvents": [
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "context-vault",
+          "title": "Context Vault",
+          "icon": "media/context-vault.svg"
+        }
+      ]
+    },
+    "views": {
+      "context-vault": [
+        {
+          "type": "webview",
+          "id": "contextVault.sidebar",
+          "name": "Context Vault"
+        }
+      ]
+    },
     "commands": [
+      {
+        "command": "contextVault.saveContext",
+        "title": "Context Vault: Save Context",
+        "icon": "$(save)"
+      },
+      {
+        "command": "contextVault.restoreContext",
+        "title": "Context Vault: Restore Context",
+        "icon": "$(history)"
+      },
+      {
+        "command": "contextVault.showContexts",
+        "title": "Context Vault: Show My Contexts",
+        "icon": "$(list-unordered)"
+      },
       {
         "command": "contextVault.saveEditorSession",
         "title": "Context Vault: Save Editor Session"
@@ -42,6 +77,20 @@
         "title": "Context Vault: Clear Saved Session"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "contextVault.saveContext",
+          "when": "view == contextVault.sidebar",
+          "group": "navigation@1"
+        },
+        {
+          "command": "contextVault.restoreContext",
+          "when": "view == contextVault.sidebar",
+          "group": "navigation@2"
+        }
+      ]
+    },
     "configuration": {
       "title": "Context Vault",
       "properties": {
@@ -53,7 +102,7 @@
         "contextVault.autoRestore": {
           "type": "boolean",
           "default": true,
-          "description": "Automatically restore saved tabs and cursor positions when a project is opened."
+          "description": "Automatically restore the last editor session when a project is opened."
         },
         "contextVault.saveDelayMs": {
           "type": "number",

@@ -7,6 +7,7 @@ import javafx.beans.property.StringProperty;
 import models.ContextEntry;
 import models.GitRepositoryInfo;
 import services.ContextService;
+import services.ExtensionBridgeService;
 import services.GitService;
 import utils.ValidationResult;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class ContextFormViewModel {
     private final ContextService contextService;
     private final GitService gitService;
+    private final ExtensionBridgeService extensionBridgeService;
     private final StringProperty name = new SimpleStringProperty("");
     private final StringProperty projectName = new SimpleStringProperty("");
     private final StringProperty projectPath = new SimpleStringProperty("");
@@ -41,9 +43,12 @@ public class ContextFormViewModel {
     private long editingId;
     private LocalDateTime createdAt;
 
-    public ContextFormViewModel(ContextService contextService, GitService gitService) {
+    public ContextFormViewModel(ContextService contextService,
+                                GitService gitService,
+                                ExtensionBridgeService extensionBridgeService) {
         this.contextService = contextService;
         this.gitService = gitService;
+        this.extensionBridgeService = extensionBridgeService;
     }
 
     public void prepareForCreate() {
@@ -103,6 +108,28 @@ public class ContextFormViewModel {
             projectName.set(path.getFileName() != null ? path.getFileName().toString() : "");
         }
         refreshGitInfo();
+        importFromExtensionBridge();
+    }
+
+    public void importFromExtensionBridge() {
+        if (projectPath.get() == null || projectPath.get().isBlank()) {
+            return;
+        }
+
+        extensionBridgeService.loadLatestContext(Path.of(projectPath.get().trim())).ifPresent(payload -> {
+            if ((projectName.get() == null || projectName.get().isBlank()) && !payload.getWorkspace().isBlank()) {
+                projectName.set(payload.getWorkspace());
+            }
+            if ((gitBranch.get() == null || gitBranch.get().isBlank()) && !payload.getGitBranch().isBlank()) {
+                gitBranch.set(payload.getGitBranch());
+            }
+            if ((openFiles.get() == null || openFiles.get().isBlank()) && !payload.getOpenFilePaths().isEmpty()) {
+                openFiles.set(String.join(System.lineSeparator(), payload.getOpenFilePaths()));
+            }
+            if ((name.get() == null || name.get().isBlank()) && !payload.getName().isBlank()) {
+                name.set(payload.getName());
+            }
+        });
     }
 
     public ValidationResult validate() {

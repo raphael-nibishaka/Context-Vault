@@ -32,6 +32,15 @@ Reconstruct the workspace instead of only showing saved information.
 - Commands are **not** auto-run — use **Run All** in the restore dialog for safety
 - VS Code extension saves/restores open tabs and cursor positions
 
+### V4 — VS Code Extension
+
+The desktop app should not require developers to manually list open files.
+
+- Activity-bar **Context Vault** sidebar with **Save Context**, **Restore Context**, and **My Contexts**
+- Detects open tabs, active file, workspace, cursor, selected text, editor groups, terminals, and Git branch
+- Writes `.context-vault/latest-context.json` so the desktop app can import open files automatically
+- Restores the same files (and recreates missing terminals) from inside VS Code
+
 ## Features
 
 - Save project contexts with name, folder, branch, commands, and notes
@@ -40,7 +49,7 @@ Reconstruct the workspace instead of only showing saved information.
 - Restore a workspace with a step-by-step checklist
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
-- VS Code / Cursor extension for editor tab and cursor restoration
+- VS Code / Cursor extension with Save Context / Restore Context / My Contexts
 
 ## Tech Stack
 
@@ -112,13 +121,13 @@ Commands are shown in the restore dialog. Click **Run All** when you are ready t
 
 If VS Code is unavailable, the app falls back to your configured editor from Settings.
 
-## V3 — VS Code Extension
+## V4 — VS Code Extension
 
-The companion extension in `vscode-extension/` makes restore smoother by remembering editor state:
+The companion extension in `vscode-extension/` is a first-class Context Vault surface inside the editor:
 
-- Detects open tabs across editor groups
-- Saves cursor positions, selections, and visible ranges
-- Restores them automatically when the project is reopened
+- Detects open tabs, active file, workspace, cursor, selection, editor groups, terminals, and Git branch
+- **Save Context** / **Restore Context** / **My Contexts** in the activity bar
+- Writes `.context-vault/latest-context.json` for the desktop app to import open files
 
 ### Install the extension
 
@@ -133,7 +142,7 @@ In VS Code or Cursor: **Extensions → … → Install from VSIX…** and choose
 
 See [`vscode-extension/README.md`](vscode-extension/README.md) for commands and settings.
 
-Session data is stored at `.context-vault/editor-session.json` inside each project.
+Session/context data is stored under `.context-vault/` inside each project.
 
 ## Notes
 

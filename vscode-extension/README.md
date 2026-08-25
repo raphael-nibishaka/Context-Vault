@@ -1,18 +1,69 @@
 # Context Vault for VS Code
 
-Companion extension for the Context Vault desktop app. It keeps your editor flow intact by saving and restoring open tabs and cursor positions.
+Companion extension for the Context Vault desktop app (V4).
 
-## What it does
+Detect open tabs, active file, workspace, cursor position, selected text, editor groups, terminals, and Git branch — then save/restore named contexts from a sidebar inside VS Code.
 
-- Detects open editor tabs across all groups
-- Saves cursor position, selection, and visible range for each tab
-- Writes session state to `.context-vault/editor-session.json` in the project
-- Restores tabs and cursors automatically when the project is reopened
-- Works with Context Vault desktop restore (open project in VS Code / Cursor)
+## Sidebar
+
+```text
+Context Vault
+────────────────
+Save Context
+Restore Context
+
+Detected Now
+  Workspace · AgriSense
+  Branch · feature/authentication
+  Active · AuthMiddleware.ts
+  Open files · AuthService.ts, JwtService.ts, ...
+
+My Contexts
+  AgriSense · feature/authentication
+  [Restore] [Delete]
+```
+
+## What it detects
+
+| Signal | Source |
+| --- | --- |
+| Open tabs | Editor tab groups |
+| Active file | Active text editor |
+| Workspace | VS Code workspace name/path |
+| Cursor position | Active selection |
+| Selected text | Current selection |
+| Editor groups | `tabGroups` |
+| Open terminals | `window.terminals` |
+| Git branch | `git branch --show-current` |
+
+## Save Context payload example
+
+```json
+{
+  "workspace": "AgriSense",
+  "activeFile": "AuthMiddleware.ts",
+  "openFiles": [
+    "AuthService.ts",
+    "JwtService.ts",
+    "UserController.ts",
+    "AuthMiddleware.ts"
+  ],
+  "gitBranch": "feature/authentication"
+}
+```
+
+Saved under:
+
+```text
+.context-vault/contexts/<id>.json
+.context-vault/contexts/index.json
+.context-vault/latest-context.json   ← bridge for the desktop app
+.context-vault/editor-session.json   ← auto tab/cursor session
+```
+
+When you browse the same project folder in the desktop app, it can auto-fill open files, branch, and name from `latest-context.json`.
 
 ## Install
-
-### From this repository
 
 ```bash
 cd vscode-extension
@@ -21,12 +72,31 @@ npm run compile
 npx vsce package --no-dependencies
 ```
 
-Then in VS Code / Cursor:
+In VS Code / Cursor:
 
-1. Extensions view → `...` → **Install from VSIX...**
-2. Select the generated `.vsix` file
+1. Extensions → `...` → **Install from VSIX...**
+2. Select `context-vault-1.1.0.vsix`
+3. Open the **Context Vault** icon in the activity bar
 
-### Development
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `Context Vault: Save Context` | Capture workspace state into a named context |
+| `Context Vault: Restore Context` | Restore the latest / chosen context |
+| `Context Vault: Show My Contexts` | Focus the sidebar |
+| `Context Vault: Save Editor Session` | Auto-session snapshot only |
+| `Context Vault: Restore Editor Session` | Restore auto-session tabs/cursors |
+
+## Settings
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `contextVault.autoSave` | `true` | Auto-save editor session while you work |
+| `contextVault.autoRestore` | `true` | Auto-restore last editor session on open |
+| `contextVault.saveDelayMs` | `750` | Debounce for auto-save |
+
+## Development
 
 ```bash
 cd vscode-extension
@@ -34,37 +104,4 @@ npm install
 npm run watch
 ```
 
-Press **F5** in VS Code with this folder open to launch an Extension Development Host.
-
-## Commands
-
-| Command | Description |
-| --- | --- |
-| `Context Vault: Save Editor Session` | Save open tabs and cursors now |
-| `Context Vault: Restore Editor Session` | Restore the last saved session |
-| `Context Vault: Clear Saved Session` | Delete the saved session file |
-
-## Settings
-
-| Setting | Default | Description |
-| --- | --- | --- |
-| `contextVault.autoSave` | `true` | Auto-save while you work |
-| `contextVault.autoRestore` | `true` | Auto-restore on project open |
-| `contextVault.saveDelayMs` | `750` | Debounce delay for auto-save |
-
-## Session file
-
-Saved relative to the workspace root:
-
-```text
-.context-vault/editor-session.json
-```
-
-Add `.context-vault/` to your project `.gitignore` if you do not want session files committed.
-
-## Smooth Context Vault flow
-
-1. Install this extension in VS Code or Cursor
-2. Work normally — tabs and cursors are saved automatically
-3. Use Context Vault desktop **Open** to restore branch, folder, editor, and commands
-4. When the project opens, this extension restores your tabs and cursor positions
+Press **F5** with the repo open to launch an Extension Development Host.
