@@ -1,13 +1,22 @@
 import * as vscode from "vscode";
-import { captureEditorSession } from "./tabCapture";
+import { captureEditorSession, captureVaultContext } from "./contextCapture";
+import {
+  deleteContext,
+  latestContextPath,
+  listContexts,
+  loadContext,
+  saveContext,
+} from "./contextStore";
 import { clearSession, loadSession, saveSession, sessionStoragePath } from "./sessionStore";
-import { restoreEditorSession } from "./tabRestore";
+import { ContextVaultViewProvider } from "./sidebarProvider";
+import { restoreEditorSession, restoreVaultContext } from "./tabRestore";
 
 const RESTORE_FLAG_KEY = "contextVault.restoredForWorkspace";
 
 let saveTimer: NodeJS.Timeout | undefined;
 let restoring = false;
 let output: vscode.OutputChannel;
+let sidebar: ContextVaultViewProvider;
 
 function config(): vscode.WorkspaceConfiguration {
   return vscode.workspace.getConfiguration("contextVault");
@@ -20,7 +29,13 @@ function workspaceKey(): string {
   );
 }
 
-async function persistSession(showMessage: boolean): Promise<void> {
+async function refreshSidebarPreview(): Promise<void> {
+  const preview = await captureVaultContext("preview");
+  sidebar.setPreview(preview);
+  sidebar.setContexts(await listContexts());
+}
+
+async function persistAutoSession(showMessage: boolean): Promise<void> {
   if (restoring) {
     return;
   }
@@ -37,7 +52,7 @@ async function persistSession(showMessage: boolean): Promise<void> {
 
   const target = await saveSession(snapshot);
   output.appendLine(
-    `Saved ${snapshot.tabs.length} tab(s) to ${target.fsPath} at ${snapshot.savedAt}`
+    `Auto-saved ${snapshot.tabs.length} tab(s) to ${target.fsPath} at ${snapshot.savedAt}`
   );
 
   if (showMessage) {
@@ -58,13 +73,129 @@ function scheduleAutoSave(): void {
 
   const delay = config().get<number>("saveDelayMs", 750);
   saveTimer = setTimeout(() => {
-    void persistSession(false).catch((error: unknown) => {
+    void persistAutoSession(false).catch((error: unknown) => {
       output.appendLine(`Auto-save failed: ${String(error)}`);
     });
+    void refreshSidebarPreview().catch(() => undefined);
   }, delay);
 }
 
-async function restoreIfNeeded(context: vscode.ExtensionContext, force: boolean): Promise<void> {
+async function saveNamedContext(): Promise<void> {
+  const draft = await captureVaultContext();
+  if (!draft) {
+    void vscode.window.showWarningMessage(
+      "Context Vault: open a folder or workspace before saving a context."
+    );
+    return;
+  }
+
+  const name = await vscode.window.showInputBox({
+    title: "Save Context",
+    prompt: "Name this development context",
+    value: `${draft.workspace}${draft.gitBranch ? ` · ${draft.gitBranch}` : ""}`,
+    ignoreFocusOut: true,
+  });
+
+  if (name === undefined) {
+    return;
+  }
+
+  draft.name = name.trim() || draft.name;
+  const saved = await saveContext(draft);
+  await persistAutoSession(false);
+  await refreshSidebarPreview();
+
+  output.appendLine(
+    `Saved context "${saved.name}" with ${saved.openFiles.length} file(s), branch ${saved.gitBranch || "n/a"}`
+  );
+  const bridge = latestContextPath();
+  if (bridge) {
+    output.appendLine(`Desktop bridge file: ${bridge}`);
+  }
+
+  void vscode.window.showInformationMessage(
+    `Context Vault saved "${saved.name}" · ${saved.openFiles.length} open file(s)` +
+      (saved.gitBranch ? ` · ${saved.gitBranch}` : "")
+  );
+}
+
+async function restoreNamedContext(id?: string): Promise<void> {
+  const contexts = await listContexts();
+  if (contexts.length === 0) {
+    void vscode.window.showInformationMessage("Context Vault: no saved contexts yet.");
+    return;
+  }
+
+  let targetId = id;
+  if (!targetId) {
+    const picked = await vscode.window.showQuickPick(
+      contexts.map((context) => ({
+        label: context.name,
+        description: `${context.gitBranch || "no branch"} · ${context.openFileCount} files`,
+        detail: context.activeFile || context.workspace,
+        id: context.id,
+      })),
+      { title: "Restore Context", placeHolder: "Choose a saved context" }
+    );
+    if (!picked) {
+      return;
+    }
+    targetId = picked.id;
+  }
+
+  const context = await loadContext(targetId);
+  if (!context) {
+    void vscode.window.showWarningMessage("Context Vault: that context could not be loaded.");
+    await refreshSidebarPreview();
+    return;
+  }
+
+  restoring = true;
+  try {
+    const result = await restoreVaultContext(context);
+    await vscode.commands.executeCommand("workbench.action.focusActiveEditorGroup");
+    output.appendLine(
+      `Restored context "${context.name}": ${result.restored} file(s), ${result.terminalsCreated} terminal(s); skipped ${result.skipped}`
+    );
+    void vscode.window.showInformationMessage(
+      `Restored "${context.name}" · ${result.restored} file(s)` +
+        (result.terminalsCreated > 0 ? ` · ${result.terminalsCreated} terminal(s)` : "")
+    );
+  } finally {
+    restoring = false;
+    scheduleAutoSave();
+  }
+}
+
+async function restoreLatestContext(): Promise<void> {
+  const contexts = await listContexts();
+  if (contexts.length === 0) {
+    void vscode.window.showInformationMessage("Context Vault: no saved contexts yet.");
+    return;
+  }
+  await restoreNamedContext(contexts[0].id);
+}
+
+async function deleteNamedContext(id: string): Promise<void> {
+  const context = await loadContext(id);
+  const label = context?.name ?? "this context";
+  const confirm = await vscode.window.showWarningMessage(
+    `Delete "${label}"?`,
+    { modal: true },
+    "Delete"
+  );
+  if (confirm !== "Delete") {
+    return;
+  }
+  await deleteContext(id);
+  await refreshSidebarPreview();
+  void vscode.window.showInformationMessage(`Context Vault deleted "${label}".`);
+}
+
+async function restoreAutoSession(
+  context: vscode.ExtensionContext,
+  force: boolean
+): Promise<void> {
   if (!force && !config().get<boolean>("autoRestore", true)) {
     return;
   }
@@ -88,9 +219,8 @@ async function restoreIfNeeded(context: vscode.ExtensionContext, force: boolean)
     const result = await restoreEditorSession(snapshot);
     await context.workspaceState.update(RESTORE_FLAG_KEY, key);
     output.appendLine(
-      `Restored ${result.restored} tab(s); skipped ${result.skipped} missing file(s).`
+      `Restored auto-session: ${result.restored} tab(s); skipped ${result.skipped}`
     );
-
     if (force || result.restored > 0) {
       void vscode.window.showInformationMessage(
         `Context Vault restored ${result.restored} tab(s)` +
@@ -107,18 +237,41 @@ async function restoreIfNeeded(context: vscode.ExtensionContext, force: boolean)
 export function activate(context: vscode.ExtensionContext): void {
   output = vscode.window.createOutputChannel("Context Vault");
   context.subscriptions.push(output);
-  output.appendLine("Context Vault extension activated.");
+  output.appendLine("Context Vault V4 extension activated.");
+
   const storagePath = sessionStoragePath();
   if (storagePath) {
-    output.appendLine(`Session file: ${storagePath}`);
+    output.appendLine(`Auto-session file: ${storagePath}`);
+  }
+  const bridge = latestContextPath();
+  if (bridge) {
+    output.appendLine(`Desktop bridge file: ${bridge}`);
   }
 
+  sidebar = new ContextVaultViewProvider(context.extensionUri, {
+    onSave: saveNamedContext,
+    onRestoreLatest: restoreLatestContext,
+    onRestore: restoreNamedContext,
+    onDelete: deleteNamedContext,
+    onRefresh: refreshSidebarPreview,
+  });
+
   context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(ContextVaultViewProvider.viewType, sidebar)
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("contextVault.saveContext", () => saveNamedContext()),
+    vscode.commands.registerCommand("contextVault.restoreContext", () => restoreLatestContext()),
+    vscode.commands.registerCommand("contextVault.showContexts", async () => {
+      await vscode.commands.executeCommand("contextVault.sidebar.focus");
+      await refreshSidebarPreview();
+    }),
     vscode.commands.registerCommand("contextVault.saveEditorSession", async () => {
-      await persistSession(true);
+      await persistAutoSession(true);
     }),
     vscode.commands.registerCommand("contextVault.restoreEditorSession", async () => {
-      await restoreIfNeeded(context, true);
+      await restoreAutoSession(context, true);
     }),
     vscode.commands.registerCommand("contextVault.clearEditorSession", async () => {
       const cleared = await clearSession();
@@ -136,6 +289,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.window.onDidChangeTextEditorSelection(() => scheduleAutoSave()),
     vscode.window.onDidChangeTextEditorVisibleRanges(() => scheduleAutoSave()),
     vscode.window.tabGroups.onDidChangeTabs(() => scheduleAutoSave()),
+    vscode.window.onDidOpenTerminal(() => scheduleAutoSave()),
+    vscode.window.onDidCloseTerminal(() => scheduleAutoSave()),
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("contextVault")) {
         scheduleAutoSave();
@@ -143,10 +298,12 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // Give the workbench a moment to settle after startup before restoring.
   setTimeout(() => {
-    void restoreIfNeeded(context, false).catch((error: unknown) => {
+    void restoreAutoSession(context, false).catch((error: unknown) => {
       output.appendLine(`Auto-restore failed: ${String(error)}`);
+    });
+    void refreshSidebarPreview().catch((error: unknown) => {
+      output.appendLine(`Sidebar refresh failed: ${String(error)}`);
     });
   }, 800);
 }

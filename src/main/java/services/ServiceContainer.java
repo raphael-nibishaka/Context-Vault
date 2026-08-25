@@ -34,13 +34,18 @@ public class ServiceContainer {
         ContextService contextService = new ContextService(contextRepository);
         SettingsService settingsService = new SettingsService(settingsRepository, themeManager);
         GitService gitService = new GitService();
+        ExtensionBridgeService extensionBridgeService = new ExtensionBridgeService();
         ExternalLaunchService externalLaunchService = new ExternalLaunchService();
         RestoreService restoreService = new RestoreService(externalLaunchService, settingsService, gitService);
         ClipboardService clipboardService = new ClipboardService();
 
         MainViewModel mainViewModel = new MainViewModel();
         DashboardViewModel dashboardViewModel = new DashboardViewModel(contextService);
-        ContextFormViewModel contextFormViewModel = new ContextFormViewModel(contextService, gitService);
+        ContextFormViewModel contextFormViewModel = new ContextFormViewModel(
+                contextService,
+                gitService,
+                extensionBridgeService
+        );
         SettingsViewModel settingsViewModel = new SettingsViewModel(settingsService);
 
         applicationCoordinator = new ApplicationCoordinator(
