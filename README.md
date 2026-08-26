@@ -41,6 +41,15 @@ The desktop app should not require developers to manually list open files.
 - Writes `.context-vault/latest-context.json` so the desktop app can import open files automatically
 - Restores the same files (and recreates missing terminals) from inside VS Code
 
+### V5 — Smart Context Detection
+
+Instead of asking what to save, Context Vault suggests the files that belong to your current task.
+
+- Scores files using active editor, recent edits, same directory, Git changes, recently opened files, and related names
+- Shows a **Likely Context** panel: “I think these files belong to your current task.”
+- One-click **Save Context** for the ranked suggestion
+- Also surfaces recent commits and recent terminal activity when available
+
 ## Features
 
 - Save project contexts with name, folder, branch, commands, and notes
@@ -49,7 +58,7 @@ The desktop app should not require developers to manually list open files.
 - Restore a workspace with a step-by-step checklist
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
-- VS Code / Cursor extension with Save Context / Restore Context / My Contexts
+- VS Code / Cursor extension with smart likely-context suggestions
 
 ## Tech Stack
 
@@ -128,6 +137,7 @@ The companion extension in `vscode-extension/` is a first-class Context Vault su
 - Detects open tabs, active file, workspace, cursor, selection, editor groups, terminals, and Git branch
 - **Save Context** / **Restore Context** / **My Contexts** in the activity bar
 - Writes `.context-vault/latest-context.json` for the desktop app to import open files
+- **V5:** ranks a likely task-file set with scoring and one-click save
 
 ### Install the extension
 

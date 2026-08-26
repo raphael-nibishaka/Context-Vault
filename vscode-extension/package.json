@@ -1,8 +1,8 @@
 {
   "name": "context-vault",
   "displayName": "Context Vault",
-  "description": "Detect open tabs, terminals, and Git branch — then save and restore developer contexts from inside VS Code.",
-  "version": "1.1.0",
+  "description": "Smart context detection for VS Code — ranks likely task files and saves/restores developer contexts.",
+  "version": "1.2.0",
   "publisher": "contextvault",
   "license": "MIT",
   "repository": {
@@ -49,6 +49,16 @@
       ]
     },
     "commands": [
+      {
+        "command": "contextVault.saveSuggestedContext",
+        "title": "Context Vault: Save Suggested Context",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "contextVault.detectLikelyContext",
+        "title": "Context Vault: Detect Likely Context",
+        "icon": "$(search)"
+      },
       {
         "command": "contextVault.saveContext",
         "title": "Context Vault: Save Context",
@@ -109,6 +119,13 @@
           "default": 750,
           "minimum": 100,
           "description": "Debounce delay (ms) before auto-saving editor session changes."
+        },
+        "contextVault.suggestionLimit": {
+          "type": "number",
+          "default": 8,
+          "minimum": 3,
+          "maximum": 20,
+          "description": "Maximum number of files to include in the likely-context suggestion."
         }
       }
     }

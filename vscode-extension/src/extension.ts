@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { activityTracker } from "./activityTracker";
 import { captureEditorSession, captureVaultContext } from "./contextCapture";
 import {
   deleteContext,
@@ -9,7 +10,9 @@ import {
 } from "./contextStore";
 import { clearSession, loadSession, saveSession, sessionStoragePath } from "./sessionStore";
 import { ContextVaultViewProvider } from "./sidebarProvider";
+import { detectLikelyContext } from "./smartDetection";
 import { restoreEditorSession, restoreVaultContext } from "./tabRestore";
+import type { LikelyContextSuggestion } from "./types";
 
 const RESTORE_FLAG_KEY = "contextVault.restoredForWorkspace";
 
@@ -17,6 +20,7 @@ let saveTimer: NodeJS.Timeout | undefined;
 let restoring = false;
 let output: vscode.OutputChannel;
 let sidebar: ContextVaultViewProvider;
+let latestSuggestion: LikelyContextSuggestion | undefined;
 
 function config(): vscode.WorkspaceConfiguration {
   return vscode.workspace.getConfiguration("contextVault");
@@ -31,7 +35,9 @@ function workspaceKey(): string {
 
 async function refreshSidebarPreview(): Promise<void> {
   const preview = await captureVaultContext("preview");
+  latestSuggestion = await detectLikelyContext(config().get<number>("suggestionLimit", 8));
   sidebar.setPreview(preview);
+  sidebar.setSuggestion(latestSuggestion);
   sidebar.setContexts(await listContexts());
 }
 
@@ -80,8 +86,8 @@ function scheduleAutoSave(): void {
   }, delay);
 }
 
-async function saveNamedContext(): Promise<void> {
-  const draft = await captureVaultContext();
+async function saveNamedContext(suggestedPaths?: string[]): Promise<void> {
+  const draft = await captureVaultContext(undefined, suggestedPaths);
   if (!draft) {
     void vscode.window.showWarningMessage(
       "Context Vault: open a folder or workspace before saving a context."
@@ -89,10 +95,16 @@ async function saveNamedContext(): Promise<void> {
     return;
   }
 
+  const defaultName = suggestedPaths?.length
+    ? `${draft.workspace}${draft.gitBranch ? ` · ${draft.gitBranch}` : ""} · smart`
+    : `${draft.workspace}${draft.gitBranch ? ` · ${draft.gitBranch}` : ""}`;
+
   const name = await vscode.window.showInputBox({
     title: "Save Context",
-    prompt: "Name this development context",
-    value: `${draft.workspace}${draft.gitBranch ? ` · ${draft.gitBranch}` : ""}`,
+    prompt: suggestedPaths?.length
+      ? `Save these ${suggestedPaths.length} suggested files as a context`
+      : "Name this development context",
+    value: defaultName,
     ignoreFocusOut: true,
   });
 
@@ -117,6 +129,20 @@ async function saveNamedContext(): Promise<void> {
     `Context Vault saved "${saved.name}" · ${saved.openFiles.length} open file(s)` +
       (saved.gitBranch ? ` · ${saved.gitBranch}` : "")
   );
+}
+
+async function saveSuggestedContext(): Promise<void> {
+  if (!latestSuggestion || latestSuggestion.files.length === 0) {
+    latestSuggestion = await detectLikelyContext(config().get<number>("suggestionLimit", 8));
+  }
+  if (!latestSuggestion || latestSuggestion.files.length === 0) {
+    void vscode.window.showInformationMessage(
+      "Context Vault: no likely task files detected yet."
+    );
+    return;
+  }
+
+  await saveNamedContext(latestSuggestion.files.map((file) => file.relativePath));
 }
 
 async function restoreNamedContext(id?: string): Promise<void> {
@@ -237,7 +263,9 @@ async function restoreAutoSession(
 export function activate(context: vscode.ExtensionContext): void {
   output = vscode.window.createOutputChannel("Context Vault");
   context.subscriptions.push(output);
-  output.appendLine("Context Vault V4 extension activated.");
+  output.appendLine("Context Vault V5 extension activated.");
+
+  activityTracker.attach(context);
 
   const storagePath = sessionStoragePath();
   if (storagePath) {
@@ -249,7 +277,8 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 
   sidebar = new ContextVaultViewProvider(context.extensionUri, {
-    onSave: saveNamedContext,
+    onSave: () => saveNamedContext(),
+    onSaveSuggestion: saveSuggestedContext,
     onRestoreLatest: restoreLatestContext,
     onRestore: restoreNamedContext,
     onDelete: deleteNamedContext,
@@ -262,6 +291,18 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("contextVault.saveContext", () => saveNamedContext()),
+    vscode.commands.registerCommand("contextVault.saveSuggestedContext", () =>
+      saveSuggestedContext()
+    ),
+    vscode.commands.registerCommand("contextVault.detectLikelyContext", async () => {
+      await refreshSidebarPreview();
+      await vscode.commands.executeCommand("contextVault.sidebar.focus");
+      if (latestSuggestion?.files.length) {
+        void vscode.window.showInformationMessage(
+          `Likely context: ${latestSuggestion.files.map((file) => file.fileName).join(", ")}`
+        );
+      }
+    }),
     vscode.commands.registerCommand("contextVault.restoreContext", () => restoreLatestContext()),
     vscode.commands.registerCommand("contextVault.showContexts", async () => {
       await vscode.commands.executeCommand("contextVault.sidebar.focus");
@@ -291,6 +332,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.window.tabGroups.onDidChangeTabs(() => scheduleAutoSave()),
     vscode.window.onDidOpenTerminal(() => scheduleAutoSave()),
     vscode.window.onDidCloseTerminal(() => scheduleAutoSave()),
+    vscode.workspace.onDidSaveTextDocument(() => scheduleAutoSave()),
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("contextVault")) {
         scheduleAutoSave();

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { ContextSummary, VaultContext } from "./types";
+import type { ContextSummary, LikelyContextSuggestion, VaultContext } from "./types";
 
 export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "contextVault.sidebar";
@@ -7,11 +7,13 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
   private view?: vscode.WebviewView;
   private contexts: ContextSummary[] = [];
   private preview?: Partial<VaultContext>;
+  private suggestion?: LikelyContextSuggestion;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly handlers: {
       onSave: () => Promise<void>;
+      onSaveSuggestion: () => Promise<void>;
       onRestoreLatest: () => Promise<void>;
       onRestore: (id: string) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
@@ -35,6 +37,9 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
       switch (message.type) {
         case "save":
           await this.handlers.onSave();
+          break;
+        case "saveSuggestion":
+          await this.handlers.onSaveSuggestion();
           break;
         case "restoreLatest":
           await this.handlers.onRestoreLatest();
@@ -66,11 +71,17 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     this.postState();
   }
 
+  setSuggestion(suggestion: LikelyContextSuggestion | undefined): void {
+    this.suggestion = suggestion;
+    this.postState();
+  }
+
   private postState(): void {
     void this.view?.webview.postMessage({
       type: "state",
       contexts: this.contexts,
       preview: this.preview,
+      suggestion: this.suggestion,
     });
   }
 
@@ -153,6 +164,22 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
       color: var(--vscode-errorForeground);
       border-color: color-mix(in srgb, var(--vscode-errorForeground) 35%, transparent);
     }
+    .file-list {
+      margin: 8px 0 0;
+      padding-left: 16px;
+    }
+    .file-list li {
+      margin: 3px 0;
+      word-break: break-word;
+    }
+    .score {
+      opacity: 0.65;
+      font-size: 11px;
+    }
+    .prompt {
+      margin-top: 8px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -161,6 +188,11 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     <button class="primary" id="saveBtn">Save Context</button>
     <button class="secondary" id="restoreBtn">Restore Context</button>
     <button class="ghost" id="refreshBtn">Refresh</button>
+  </div>
+
+  <div class="section-label">Likely Context</div>
+  <div class="card" id="suggestionCard">
+    <div class="empty">Analyzing your current task…</div>
   </div>
 
   <div class="section-label">Detected Now</div>
@@ -177,6 +209,7 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     const vscode = acquireVsCodeApi();
     const previewCard = document.getElementById('previewCard');
     const contextsList = document.getElementById('contextsList');
+    const suggestionCard = document.getElementById('suggestionCard');
 
     document.getElementById('saveBtn').addEventListener('click', () => {
       vscode.postMessage({ type: 'save' });
@@ -194,6 +227,49 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;');
+    }
+
+    function renderSuggestion(suggestion) {
+      if (!suggestion) {
+        suggestionCard.innerHTML = '<div class="empty">Open files or make Git changes to get smart suggestions.</div>';
+        return;
+      }
+
+      if (!suggestion.files || suggestion.files.length === 0) {
+        suggestionCard.innerHTML = \`
+          <div class="title">I think these files belong to your current task.</div>
+          <div class="muted">Branch · \${escapeHtml(suggestion.branch || 'n/a')}</div>
+          <div class="empty">\${escapeHtml(suggestion.prompt)}</div>
+        \`;
+        return;
+      }
+
+      const files = suggestion.files.map((file) => \`
+        <li>
+          <strong>\${escapeHtml(file.fileName)}</strong>
+          <span class="score">· \${file.score}</span>
+          <div class="muted">\${escapeHtml((file.reasons || []).join(', '))}</div>
+        </li>
+      \`).join('');
+
+      const commits = (suggestion.recentCommits || []).slice(0, 3)
+        .map((item) => \`<div class="muted">• \${escapeHtml(item)}</div>\`).join('');
+      const terminals = (suggestion.recentTerminalCommands || []).slice(0, 3)
+        .map((item) => \`<div class="muted">• \${escapeHtml(item)}</div>\`).join('');
+
+      suggestionCard.innerHTML = \`
+        <div class="title">I think these files belong to your current task.</div>
+        <div class="muted">Branch · \${escapeHtml(suggestion.branch || 'n/a')}</div>
+        <ul class="file-list">\${files}</ul>
+        \${commits ? \`<div class="section-label" style="margin-top:10px">Recent commits</div>\${commits}\` : ''}
+        \${terminals ? \`<div class="section-label" style="margin-top:10px">Recent terminals</div>\${terminals}\` : ''}
+        <div class="prompt">\${escapeHtml(suggestion.prompt)}</div>
+        <button class="primary" id="saveSuggestionBtn" style="margin-top:8px">Save Context</button>
+      \`;
+
+      document.getElementById('saveSuggestionBtn')?.addEventListener('click', () => {
+        vscode.postMessage({ type: 'saveSuggestion' });
+      });
     }
 
     function renderPreview(preview) {
@@ -246,6 +322,7 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'state') {
+        renderSuggestion(message.suggestion);
         renderPreview(message.preview);
         renderContexts(message.contexts);
       }

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { execFile } from "child_process";
 import { promisify } from "util";
+import * as path from "path";
 import type {
   EditorGroupSnapshot,
   EditorSessionSnapshot,
@@ -162,7 +163,10 @@ export function captureEditorSession(): EditorSessionSnapshot | undefined {
   };
 }
 
-export async function captureVaultContext(name?: string): Promise<VaultContext | undefined> {
+export async function captureVaultContext(
+  name?: string,
+  suggestedPaths?: string[]
+): Promise<VaultContext | undefined> {
   const folders = vscode.workspace.workspaceFolders;
   if (!folders || folders.length === 0) {
     return undefined;
@@ -183,6 +187,15 @@ export async function captureVaultContext(name?: string): Promise<VaultContext |
     name?.trim() ||
     `${workspace}${gitBranch ? ` · ${gitBranch}` : ""} · ${new Date().toLocaleString()}`;
 
+  const openFilePaths =
+    suggestedPaths && suggestedPaths.length > 0
+      ? suggestedPaths.map((filePath) =>
+          path.isAbsolute(filePath) ? toRelativePath(filePath) : filePath.replace(/\\/g, "/")
+        )
+      : tabs.map((tab) => tab.relativePath);
+
+  const openFiles = openFilePaths.map((relative) => fileNameOf(relative));
+
   return {
     version: CONTEXT_VERSION,
     id: createId(),
@@ -191,10 +204,10 @@ export async function captureVaultContext(name?: string): Promise<VaultContext |
     workspace,
     workspacePath,
     workspaceFolders: folders.map((folder) => folder.uri.fsPath),
-    activeFile: activeTab?.fileName ?? "",
-    activeFilePath: activeTab?.relativePath ?? "",
-    openFiles: tabs.map((tab) => tab.fileName),
-    openFilePaths: tabs.map((tab) => tab.relativePath),
+    activeFile: activeTab?.fileName ?? openFiles[0] ?? "",
+    activeFilePath: activeTab?.relativePath ?? openFilePaths[0] ?? "",
+    openFiles,
+    openFilePaths,
     gitBranch,
     cursor: activeEditor ? toPosition(activeEditor.selection.active) : undefined,
     selectedText,
