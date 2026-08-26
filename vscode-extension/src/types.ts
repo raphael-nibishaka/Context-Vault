@@ -73,9 +73,34 @@ export interface ContextSummary {
   activeFile: string;
 }
 
+export interface ScoredFile {
+  fsPath: string;
+  relativePath: string;
+  fileName: string;
+  score: number;
+  reasons: string[];
+}
+
+export interface LikelyContextSuggestion {
+  branch: string;
+  workspace: string;
+  activeFile: string;
+  recentCommits: string[];
+  recentTerminalCommands: string[];
+  files: ScoredFile[];
+  prompt: string;
+}
+
 export const SESSION_FILE_RELATIVE_PATH = ".context-vault/editor-session.json";
 export const CONTEXTS_DIR_RELATIVE_PATH = ".context-vault/contexts";
 export const LATEST_CONTEXT_RELATIVE_PATH = ".context-vault/latest-context.json";
 export const CONTEXT_INDEX_RELATIVE_PATH = ".context-vault/contexts/index.json";
 export const SESSION_VERSION = 1 as const;
 export const CONTEXT_VERSION = 2 as const;
+
+export const SCORE_ACTIVE_FILE = 30;
+export const SCORE_RECENTLY_MODIFIED = 20;
+export const SCORE_SAME_DIRECTORY = 15;
+export const SCORE_GIT_CHANGE = 20;
+export const SCORE_RECENTLY_OPENED = 10;
+export const SCORE_RELATED_NAME = 5;
