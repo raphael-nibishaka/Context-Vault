@@ -61,6 +61,13 @@
                                     </children>
                                 </HBox>
 
+                                <VBox spacing="8.0" styleClass="restore-actions-panel">
+                                    <children>
+                                        <Label text="Welcome Back" styleClass="field-label" />
+                                        <Label fx:id="welcomeBackLabel" styleClass="restore-actions-summary" wrapText="true" />
+                                    </children>
+                                </VBox>
+
                                 <VBox spacing="0.0" styleClass="form-card, glass-inset, restore-info-card">
                                     <padding>
                                         <Insets top="18" right="18" bottom="18" left="18" />

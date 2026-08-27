@@ -33,6 +33,8 @@ public class RestoreDialogController {
     @FXML
     private Label statusMessageLabel;
     @FXML
+    private Label welcomeBackLabel;
+    @FXML
     private Label restoreChecklistLabel;
     @FXML
     private VBox warningsPanel;
@@ -66,6 +68,7 @@ public class RestoreDialogController {
         projectPathLabel.textProperty().bind(viewModel.projectPathProperty());
         statusHeadlineLabel.textProperty().bind(viewModel.statusHeadlineProperty());
         statusMessageLabel.textProperty().bind(viewModel.statusMessageProperty());
+        welcomeBackLabel.textProperty().bind(viewModel.welcomeBackProperty());
         restoreChecklistLabel.textProperty().bind(viewModel.restoreChecklistProperty());
         commandsArea.textProperty().bind(viewModel.commandsProperty());
         notesArea.textProperty().bind(viewModel.notesProperty());

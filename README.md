@@ -50,6 +50,15 @@ Instead of asking what to save, Context Vault suggests the files that belong to 
 - One-click **Save Context** for the ranked suggestion
 - Also surfaces recent commits and recent terminal activity when available
 
+### V6 — AI Context Intelligence
+
+AI is optional and only used after context is already collected.
+
+- On save: generates a context summary, current-work bullets, and a likely next step
+- On return: shows a **Welcome back** handoff with last activity, notes, and suggested next step
+- Also produces task / commit / handoff style summaries
+- Without an API key, heuristic summaries still work
+
 ## Features
 
 - Save project contexts with name, folder, branch, commands, and notes
@@ -58,7 +67,7 @@ Instead of asking what to save, Context Vault suggests the files that belong to 
 - Restore a workspace with a step-by-step checklist
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
-- VS Code / Cursor extension with smart likely-context suggestions
+- VS Code / Cursor extension with smart + optional AI intelligence
 
 ## Tech Stack
 
@@ -138,6 +147,7 @@ The companion extension in `vscode-extension/` is a first-class Context Vault su
 - **Save Context** / **Restore Context** / **My Contexts** in the activity bar
 - Writes `.context-vault/latest-context.json` for the desktop app to import open files
 - **V5:** ranks a likely task-file set with scoring and one-click save
+- **V6:** optional AI (or heuristic) summaries + welcome-back handoff
 
 ### Install the extension
 
