@@ -33,6 +33,7 @@ public class DatabaseInitializer {
                         commands TEXT,
                         tags TEXT,
                         browser_urls TEXT,
+                        ai_summary TEXT,
                         created_at TEXT NOT NULL,
                         updated_at TEXT NOT NULL
                     )
@@ -58,6 +59,7 @@ public class DatabaseInitializer {
         addColumnIfMissing(connection, "contexts", "open_files", "TEXT");
         addColumnIfMissing(connection, "contexts", "tags", "TEXT");
         addColumnIfMissing(connection, "contexts", "browser_urls", "TEXT");
+        addColumnIfMissing(connection, "contexts", "ai_summary", "TEXT");
     }
 
     private void addColumnIfMissing(Connection connection, String table, String column, String definition)
