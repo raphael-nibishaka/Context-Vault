@@ -42,8 +42,19 @@ export interface EditorSessionSnapshot {
   tabs: TabSnapshot[];
 }
 
+export interface ContextIntelligence {
+  summary: string;
+  currentWork: string[];
+  nextStep: string;
+  taskDescription: string;
+  commitSummary: string;
+  handoffSummary: string;
+  source: "ai" | "heuristic";
+  generatedAt: string;
+}
+
 export interface VaultContext {
-  version: 2;
+  version: 2 | 3;
   id: string;
   name: string;
   savedAt: string;
@@ -61,6 +72,7 @@ export interface VaultContext {
   terminals: TerminalSnapshot[];
   tabs: TabSnapshot[];
   note?: string;
+  intelligence?: ContextIntelligence;
 }
 
 export interface ContextSummary {
@@ -71,6 +83,8 @@ export interface ContextSummary {
   gitBranch: string;
   openFileCount: number;
   activeFile: string;
+  nextStep?: string;
+  summary?: string;
 }
 
 export interface ScoredFile {
@@ -91,12 +105,23 @@ export interface LikelyContextSuggestion {
   prompt: string;
 }
 
+export interface WelcomeBackMessage {
+  title: string;
+  contextName: string;
+  lastActivity: string;
+  modifiedFileCount: number;
+  lastNote: string;
+  nextStep: string;
+  summary: string;
+  source: "ai" | "heuristic" | "none";
+}
+
 export const SESSION_FILE_RELATIVE_PATH = ".context-vault/editor-session.json";
 export const CONTEXTS_DIR_RELATIVE_PATH = ".context-vault/contexts";
 export const LATEST_CONTEXT_RELATIVE_PATH = ".context-vault/latest-context.json";
 export const CONTEXT_INDEX_RELATIVE_PATH = ".context-vault/contexts/index.json";
 export const SESSION_VERSION = 1 as const;
-export const CONTEXT_VERSION = 2 as const;
+export const CONTEXT_VERSION = 3 as const;
 
 export const SCORE_ACTIVE_FILE = 30;
 export const SCORE_RECENTLY_MODIFIED = 20;
