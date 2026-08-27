@@ -1,5 +1,10 @@
 import * as vscode from "vscode";
 import { activityTracker } from "./activityTracker";
+import {
+  clearStoredApiKey,
+  generateContextIntelligence,
+  setStoredApiKey,
+} from "./aiIntelligence";
 import { captureEditorSession, captureVaultContext } from "./contextCapture";
 import {
   deleteContext,
@@ -13,14 +18,17 @@ import { ContextVaultViewProvider } from "./sidebarProvider";
 import { detectLikelyContext } from "./smartDetection";
 import { restoreEditorSession, restoreVaultContext } from "./tabRestore";
 import type { LikelyContextSuggestion } from "./types";
+import { buildWelcomeBackMessage } from "./welcomeBack";
 
 const RESTORE_FLAG_KEY = "contextVault.restoredForWorkspace";
+const WELCOME_SHOWN_KEY = "contextVault.welcomeShownFor";
 
 let saveTimer: NodeJS.Timeout | undefined;
 let restoring = false;
 let output: vscode.OutputChannel;
 let sidebar: ContextVaultViewProvider;
 let latestSuggestion: LikelyContextSuggestion | undefined;
+let extensionContext: vscode.ExtensionContext;
 
 function config(): vscode.WorkspaceConfiguration {
   return vscode.workspace.getConfiguration("contextVault");
@@ -36,9 +44,16 @@ function workspaceKey(): string {
 async function refreshSidebarPreview(): Promise<void> {
   const preview = await captureVaultContext("preview");
   latestSuggestion = await detectLikelyContext(config().get<number>("suggestionLimit", 8));
+  const contexts = await listContexts();
+  const latest = contexts.length > 0 ? await loadContext(contexts[0].id) : undefined;
+  if (latest?.intelligence && preview) {
+    preview.intelligence = latest.intelligence;
+    preview.note = latest.note;
+  }
   sidebar.setPreview(preview);
   sidebar.setSuggestion(latestSuggestion);
-  sidebar.setContexts(await listContexts());
+  sidebar.setWelcome(buildWelcomeBackMessage(latest));
+  sidebar.setContexts(contexts);
 }
 
 async function persistAutoSession(showMessage: boolean): Promise<void> {
@@ -113,6 +128,31 @@ async function saveNamedContext(suggestedPaths?: string[]): Promise<void> {
   }
 
   draft.name = name.trim() || draft.name;
+
+  const optionalNote = await vscode.window.showInputBox({
+    title: "Optional Note",
+    prompt: "Add a short note for your future self (optional)",
+    value: draft.note || "",
+    ignoreFocusOut: true,
+  });
+  if (optionalNote !== undefined) {
+    draft.note = optionalNote.trim();
+  }
+
+  await vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: "Context Vault is generating a context summary…",
+      cancellable: false,
+    },
+    async () => {
+      draft.intelligence = await generateContextIntelligence(
+        draft,
+        extensionContext.secrets
+      );
+    }
+  );
+
   const saved = await saveContext(draft);
   await persistAutoSession(false);
   await refreshSidebarPreview();
@@ -120,15 +160,33 @@ async function saveNamedContext(suggestedPaths?: string[]): Promise<void> {
   output.appendLine(
     `Saved context "${saved.name}" with ${saved.openFiles.length} file(s), branch ${saved.gitBranch || "n/a"}`
   );
+  output.appendLine(
+    `Intelligence (${saved.intelligence?.source}): ${saved.intelligence?.summary || "n/a"}`
+  );
   const bridge = latestContextPath();
   if (bridge) {
     output.appendLine(`Desktop bridge file: ${bridge}`);
   }
 
   void vscode.window.showInformationMessage(
-    `Context Vault saved "${saved.name}" · ${saved.openFiles.length} open file(s)` +
-      (saved.gitBranch ? ` · ${saved.gitBranch}` : "")
-  );
+    `Saved "${saved.name}"` +
+      (saved.intelligence?.nextStep ? ` · Next: ${saved.intelligence.nextStep}` : ""),
+    "Show Summary"
+  ).then((choice) => {
+    if (choice === "Show Summary" && saved.intelligence) {
+      void vscode.window.showInformationMessage(
+        [
+          saved.intelligence.summary,
+          "",
+          "Current work:",
+          ...saved.intelligence.currentWork.map((item) => `• ${item}`),
+          "",
+          `Likely next step: ${saved.intelligence.nextStep}`,
+        ].join("\n"),
+        { modal: true }
+      );
+    }
+  });
 }
 
 async function saveSuggestedContext(): Promise<void> {
@@ -261,9 +319,10 @@ async function restoreAutoSession(
 }
 
 export function activate(context: vscode.ExtensionContext): void {
+  extensionContext = context;
   output = vscode.window.createOutputChannel("Context Vault");
   context.subscriptions.push(output);
-  output.appendLine("Context Vault V5 extension activated.");
+  output.appendLine("Context Vault V6 extension activated.");
 
   activityTracker.attach(context);
 
@@ -308,6 +367,29 @@ export function activate(context: vscode.ExtensionContext): void {
       await vscode.commands.executeCommand("contextVault.sidebar.focus");
       await refreshSidebarPreview();
     }),
+    vscode.commands.registerCommand("contextVault.setAiApiKey", async () => {
+      const apiKey = await vscode.window.showInputBox({
+        title: "Context Vault AI API Key",
+        prompt: "Stored securely in VS Code Secret Storage. Leave blank to clear.",
+        password: true,
+        ignoreFocusOut: true,
+      });
+      if (apiKey === undefined) {
+        return;
+      }
+      if (!apiKey.trim()) {
+        await clearStoredApiKey(context.secrets);
+        void vscode.window.showInformationMessage("Context Vault AI API key cleared.");
+        return;
+      }
+      await setStoredApiKey(context.secrets, apiKey);
+      await vscode.workspace
+        .getConfiguration("contextVault")
+        .update("enableAi", true, vscode.ConfigurationTarget.Global);
+      void vscode.window.showInformationMessage(
+        "Context Vault AI API key saved. AI summaries are now enabled."
+      );
+    }),
     vscode.commands.registerCommand("contextVault.saveEditorSession", async () => {
       await persistAutoSession(true);
     }),
@@ -344,9 +426,31 @@ export function activate(context: vscode.ExtensionContext): void {
     void restoreAutoSession(context, false).catch((error: unknown) => {
       output.appendLine(`Auto-restore failed: ${String(error)}`);
     });
-    void refreshSidebarPreview().catch((error: unknown) => {
-      output.appendLine(`Sidebar refresh failed: ${String(error)}`);
-    });
+    void refreshSidebarPreview()
+      .then(async () => {
+        const contexts = await listContexts();
+        const latest = contexts.length > 0 ? await loadContext(contexts[0].id) : undefined;
+        const welcome = buildWelcomeBackMessage(latest);
+        if (!welcome || !latest) {
+          return;
+        }
+        const shownFor = context.workspaceState.get<string>(WELCOME_SHOWN_KEY);
+        if (shownFor === latest.id) {
+          return;
+        }
+        await context.workspaceState.update(WELCOME_SHOWN_KEY, latest.id);
+        void vscode.window.showInformationMessage(
+          `Welcome back — you were working on ${welcome.contextName} (${welcome.lastActivity}). Next: ${welcome.nextStep}`,
+          "Open Context Vault"
+        ).then((choice) => {
+          if (choice === "Open Context Vault") {
+            void vscode.commands.executeCommand("contextVault.sidebar.focus");
+          }
+        });
+      })
+      .catch((error: unknown) => {
+        output.appendLine(`Sidebar refresh failed: ${String(error)}`);
+      });
   }, 800);
 }
 

@@ -1,5 +1,10 @@
 import * as vscode from "vscode";
-import type { ContextSummary, LikelyContextSuggestion, VaultContext } from "./types";
+import type {
+  ContextSummary,
+  LikelyContextSuggestion,
+  VaultContext,
+  WelcomeBackMessage,
+} from "./types";
 
 export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "contextVault.sidebar";
@@ -8,6 +13,7 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
   private contexts: ContextSummary[] = [];
   private preview?: Partial<VaultContext>;
   private suggestion?: LikelyContextSuggestion;
+  private welcome?: WelcomeBackMessage;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -76,12 +82,18 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     this.postState();
   }
 
+  setWelcome(welcome: WelcomeBackMessage | undefined): void {
+    this.welcome = welcome;
+    this.postState();
+  }
+
   private postState(): void {
     void this.view?.webview.postMessage({
       type: "state",
       contexts: this.contexts,
       preview: this.preview,
       suggestion: this.suggestion,
+      welcome: this.welcome,
     });
   }
 
@@ -92,11 +104,7 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {
-      color-scheme: light dark;
-      --gap: 10px;
-      --radius: 8px;
-    }
+    :root { color-scheme: light dark; --gap: 10px; --radius: 8px; }
     body {
       font-family: var(--vscode-font-family);
       font-size: var(--vscode-font-size);
@@ -106,42 +114,26 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
       padding: 12px;
     }
     h1 {
-      font-size: 13px;
-      font-weight: 700;
-      margin: 0 0 12px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      opacity: 0.85;
+      font-size: 13px; font-weight: 700; margin: 0 0 12px;
+      letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85;
     }
     .stack { display: flex; flex-direction: column; gap: var(--gap); }
     button {
       border: 1px solid var(--vscode-button-border, transparent);
-      border-radius: var(--radius);
-      padding: 8px 10px;
-      cursor: pointer;
-      font: inherit;
-      width: 100%;
-      text-align: left;
+      border-radius: var(--radius); padding: 8px 10px; cursor: pointer;
+      font: inherit; width: 100%; text-align: left;
     }
-    .primary {
-      background: var(--vscode-button-background);
-      color: var(--vscode-button-foreground);
-    }
+    .primary { background: var(--vscode-button-background); color: var(--vscode-button-foreground); }
     .primary:hover { background: var(--vscode-button-hoverBackground); }
-    .secondary {
-      background: var(--vscode-button-secondaryBackground);
-      color: var(--vscode-button-secondaryForeground);
-    }
+    .secondary { background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground); }
     .secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
     .ghost {
-      background: transparent;
-      color: var(--vscode-foreground);
+      background: transparent; color: var(--vscode-foreground);
       border-color: var(--vscode-input-border, rgba(127,127,127,0.35));
     }
     .card {
       border: 1px solid var(--vscode-input-border, rgba(127,127,127,0.35));
-      border-radius: var(--radius);
-      padding: 10px;
+      border-radius: var(--radius); padding: 10px;
       background: var(--vscode-editor-background);
     }
     .muted { opacity: 0.72; font-size: 12px; }
@@ -151,35 +143,18 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     .preview-line { margin: 2px 0; word-break: break-word; }
     .empty { opacity: 0.65; font-size: 12px; padding: 8px 0; }
     .section-label {
-      margin-top: 8px;
-      margin-bottom: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      opacity: 0.7;
+      margin-top: 8px; margin-bottom: 4px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.7;
     }
     .danger {
-      background: transparent;
-      color: var(--vscode-errorForeground);
+      background: transparent; color: var(--vscode-errorForeground);
       border-color: color-mix(in srgb, var(--vscode-errorForeground) 35%, transparent);
     }
-    .file-list {
-      margin: 8px 0 0;
-      padding-left: 16px;
-    }
-    .file-list li {
-      margin: 3px 0;
-      word-break: break-word;
-    }
-    .score {
-      opacity: 0.65;
-      font-size: 11px;
-    }
-    .prompt {
-      margin-top: 8px;
-      font-weight: 600;
-    }
+    .file-list { margin: 8px 0 0; padding-left: 16px; }
+    .file-list li { margin: 3px 0; word-break: break-word; }
+    .score { opacity: 0.65; font-size: 11px; }
+    .prompt { margin-top: 8px; font-weight: 600; }
+    .welcome { border-color: color-mix(in srgb, var(--vscode-focusBorder) 45%, transparent); }
   </style>
 </head>
 <body>
@@ -188,6 +163,11 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     <button class="primary" id="saveBtn">Save Context</button>
     <button class="secondary" id="restoreBtn">Restore Context</button>
     <button class="ghost" id="refreshBtn">Refresh</button>
+  </div>
+
+  <div class="section-label">Welcome Back</div>
+  <div class="card welcome" id="welcomeCard">
+    <div class="empty">Save a context to unlock welcome-back intelligence.</div>
   </div>
 
   <div class="section-label">Likely Context</div>
@@ -210,16 +190,11 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     const previewCard = document.getElementById('previewCard');
     const contextsList = document.getElementById('contextsList');
     const suggestionCard = document.getElementById('suggestionCard');
+    const welcomeCard = document.getElementById('welcomeCard');
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      vscode.postMessage({ type: 'save' });
-    });
-    document.getElementById('restoreBtn').addEventListener('click', () => {
-      vscode.postMessage({ type: 'restoreLatest' });
-    });
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      vscode.postMessage({ type: 'refresh' });
-    });
+    document.getElementById('saveBtn').addEventListener('click', () => vscode.postMessage({ type: 'save' }));
+    document.getElementById('restoreBtn').addEventListener('click', () => vscode.postMessage({ type: 'restoreLatest' }));
+    document.getElementById('refreshBtn').addEventListener('click', () => vscode.postMessage({ type: 'refresh' }));
 
     function escapeHtml(value) {
       return String(value ?? '')
@@ -229,12 +204,27 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
         .replaceAll('"', '&quot;');
     }
 
+    function renderWelcome(welcome) {
+      if (!welcome) {
+        welcomeCard.innerHTML = '<div class="empty">Save a context to unlock welcome-back intelligence.</div>';
+        return;
+      }
+      welcomeCard.innerHTML = \`
+        <div class="title">\${escapeHtml(welcome.title)}</div>
+        <div class="preview-line">You were working on <strong>\${escapeHtml(welcome.contextName)}</strong></div>
+        <div class="muted">Last activity: \${escapeHtml(welcome.lastActivity)}</div>
+        <div class="muted">You had \${welcome.modifiedFileCount} file(s) in context.</div>
+        <div class="preview-line" style="margin-top:8px"><strong>Last note</strong><br/>\${escapeHtml(welcome.lastNote)}</div>
+        <div class="preview-line" style="margin-top:8px"><strong>Suggested next step</strong><br/>\${escapeHtml(welcome.nextStep)}</div>
+        <div class="muted" style="margin-top:8px">\${escapeHtml(welcome.summary)}</div>
+      \`;
+    }
+
     function renderSuggestion(suggestion) {
       if (!suggestion) {
         suggestionCard.innerHTML = '<div class="empty">Open files or make Git changes to get smart suggestions.</div>';
         return;
       }
-
       if (!suggestion.files || suggestion.files.length === 0) {
         suggestionCard.innerHTML = \`
           <div class="title">I think these files belong to your current task.</div>
@@ -243,7 +233,6 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
         \`;
         return;
       }
-
       const files = suggestion.files.map((file) => \`
         <li>
           <strong>\${escapeHtml(file.fileName)}</strong>
@@ -251,22 +240,13 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
           <div class="muted">\${escapeHtml((file.reasons || []).join(', '))}</div>
         </li>
       \`).join('');
-
-      const commits = (suggestion.recentCommits || []).slice(0, 3)
-        .map((item) => \`<div class="muted">• \${escapeHtml(item)}</div>\`).join('');
-      const terminals = (suggestion.recentTerminalCommands || []).slice(0, 3)
-        .map((item) => \`<div class="muted">• \${escapeHtml(item)}</div>\`).join('');
-
       suggestionCard.innerHTML = \`
         <div class="title">I think these files belong to your current task.</div>
         <div class="muted">Branch · \${escapeHtml(suggestion.branch || 'n/a')}</div>
         <ul class="file-list">\${files}</ul>
-        \${commits ? \`<div class="section-label" style="margin-top:10px">Recent commits</div>\${commits}\` : ''}
-        \${terminals ? \`<div class="section-label" style="margin-top:10px">Recent terminals</div>\${terminals}\` : ''}
         <div class="prompt">\${escapeHtml(suggestion.prompt)}</div>
         <button class="primary" id="saveSuggestionBtn" style="margin-top:8px">Save Context</button>
       \`;
-
       document.getElementById('saveSuggestionBtn')?.addEventListener('click', () => {
         vscode.postMessage({ type: 'saveSuggestion' });
       });
@@ -278,12 +258,18 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
         return;
       }
       const files = (preview.openFiles || []).slice(0, 6).map(escapeHtml).join(', ') || 'None';
+      const intelligence = preview.intelligence;
       previewCard.innerHTML = \`
         <div class="preview-line"><strong>Workspace</strong> · \${escapeHtml(preview.workspace)}</div>
         <div class="preview-line"><strong>Branch</strong> · \${escapeHtml(preview.gitBranch || 'n/a')}</div>
         <div class="preview-line"><strong>Active</strong> · \${escapeHtml(preview.activeFile || 'n/a')}</div>
         <div class="preview-line"><strong>Open files</strong> · \${files}</div>
-        <div class="preview-line muted">\${(preview.terminals || []).length} terminal(s) · \${(preview.editorGroups || []).length} editor group(s)</div>
+        \${intelligence ? \`
+          <div class="section-label" style="margin-top:10px">Context Summary</div>
+          <div class="preview-line">\${escapeHtml(intelligence.summary)}</div>
+          <div class="muted">Next: \${escapeHtml(intelligence.nextStep)}</div>
+          <div class="muted">Source: \${escapeHtml(intelligence.source)}</div>
+        \` : ''}
       \`;
     }
 
@@ -296,7 +282,8 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
         <div class="card" data-id="\${escapeHtml(context.id)}">
           <div class="title">\${escapeHtml(context.name)}</div>
           <div class="muted">\${escapeHtml(context.gitBranch || 'no branch')} · \${context.openFileCount} files</div>
-          <div class="muted">\${escapeHtml(context.activeFile || 'no active file')}</div>
+          \${context.summary ? \`<div class="muted">\${escapeHtml(context.summary)}</div>\` : ''}
+          \${context.nextStep ? \`<div class="muted">Next: \${escapeHtml(context.nextStep)}</div>\` : ''}
           <div class="muted">\${new Date(context.savedAt).toLocaleString()}</div>
           <div class="row" style="margin-top:8px">
             <button class="secondary restore-one">Restore</button>
@@ -322,6 +309,7 @@ export class ContextVaultViewProvider implements vscode.WebviewViewProvider {
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'state') {
+        renderWelcome(message.welcome);
         renderSuggestion(message.suggestion);
         renderPreview(message.preview);
         renderContexts(message.contexts);
