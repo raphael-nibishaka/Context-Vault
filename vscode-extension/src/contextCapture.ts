@@ -232,5 +232,7 @@ export function toDesktopBridgePayload(context: VaultContext): Record<string, un
     terminals: context.terminals,
     savedAt: context.savedAt,
     name: context.name,
+    note: context.note,
+    intelligence: context.intelligence,
   };
 }

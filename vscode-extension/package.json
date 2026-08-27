@@ -1,8 +1,8 @@
 {
   "name": "context-vault",
   "displayName": "Context Vault",
-  "description": "Smart context detection for VS Code — ranks likely task files and saves/restores developer contexts.",
-  "version": "1.2.0",
+  "description": "Smart + optional AI context intelligence for VS Code — detect, summarize, and restore developer work.",
+  "version": "1.3.0",
   "publisher": "contextvault",
   "license": "MIT",
   "repository": {
@@ -49,6 +49,10 @@
       ]
     },
     "commands": [
+      {
+        "command": "contextVault.setAiApiKey",
+        "title": "Context Vault: Set AI API Key"
+      },
       {
         "command": "contextVault.saveSuggestedContext",
         "title": "Context Vault: Save Suggested Context",
@@ -126,6 +130,21 @@
           "minimum": 3,
           "maximum": 20,
           "description": "Maximum number of files to include in the likely-context suggestion."
+        },
+        "contextVault.enableAi": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use an optional AI provider to generate richer context summaries. Heuristic summaries are always available as a fallback."
+        },
+        "contextVault.aiEndpoint": {
+          "type": "string",
+          "default": "https://api.openai.com/v1/chat/completions",
+          "description": "OpenAI-compatible chat completions endpoint."
+        },
+        "contextVault.aiModel": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "Model name used when AI intelligence is enabled."
         }
       }
     }

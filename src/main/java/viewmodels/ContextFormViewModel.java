@@ -29,6 +29,7 @@ public class ContextFormViewModel {
     private final StringProperty notes = new SimpleStringProperty("");
     private final StringProperty tags = new SimpleStringProperty("");
     private final StringProperty browserUrls = new SimpleStringProperty("");
+    private final StringProperty aiSummary = new SimpleStringProperty("");
     private final StringProperty validationMessage = new SimpleStringProperty("");
     private final BooleanProperty editMode = new SimpleBooleanProperty(false);
     private final BooleanProperty gitRepository = new SimpleBooleanProperty(false);
@@ -72,6 +73,7 @@ public class ContextFormViewModel {
         notes.set(safe(contextEntry.getNote()));
         tags.set(safe(contextEntry.getTags()));
         browserUrls.set(safe(contextEntry.getBrowserUrls()));
+        aiSummary.set(safe(contextEntry.getAiSummary()));
         validationMessage.set("");
         refreshGitInfo();
     }
@@ -129,6 +131,14 @@ public class ContextFormViewModel {
             if ((name.get() == null || name.get().isBlank()) && !payload.getName().isBlank()) {
                 name.set(payload.getName());
             }
+            if ((notes.get() == null || notes.get().isBlank()) && !payload.getNote().isBlank()) {
+                notes.set(payload.getNote());
+            }
+            if ((aiSummary.get() == null || aiSummary.get().isBlank()) && !payload.getAiSummary().isBlank()) {
+                aiSummary.set(payload.getAiSummary());
+            } else if ((notes.get() == null || notes.get().isBlank()) && !payload.getAiSummary().isBlank()) {
+                notes.set(payload.getAiSummary());
+            }
         });
     }
 
@@ -160,7 +170,8 @@ public class ContextFormViewModel {
                 safe(notes.get()),
                 safe(commands.get()),
                 safe(tags.get()),
-                safe(browserUrls.get())
+                safe(browserUrls.get()),
+                safe(aiSummary.get())
         );
         entry.setId(editingId);
         if (createdAt != null) {
@@ -180,6 +191,7 @@ public class ContextFormViewModel {
         notes.set("");
         tags.set("");
         browserUrls.set("");
+        aiSummary.set("");
         validationMessage.set("");
         clearGitPanel();
     }
@@ -244,6 +256,10 @@ public class ContextFormViewModel {
 
     public StringProperty browserUrlsProperty() {
         return browserUrls;
+    }
+
+    public StringProperty aiSummaryProperty() {
+        return aiSummary;
     }
 
     public StringProperty validationMessageProperty() {

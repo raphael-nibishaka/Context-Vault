@@ -1,0 +1,6 @@
+{
+  "contextVault.enableAi": true,
+  "contextVault.aiModel": "gpt-4o-mini",
+  "contextVault.aiEndpoint": "https://api.openai.com/v1/chat/completions",
+  "contextVault.suggestionLimit": 8
+}

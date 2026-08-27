@@ -15,6 +15,7 @@ public class ContextEntry {
     private String commands;
     private String tags;
     private String browserUrls;
+    private String aiSummary;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,6 +33,7 @@ public class ContextEntry {
                         String commands,
                         String tags,
                         String browserUrls,
+                        String aiSummary,
                         LocalDateTime createdAt,
                         LocalDateTime updatedAt) {
         this.id = id;
@@ -45,6 +47,7 @@ public class ContextEntry {
         this.commands = commands;
         this.tags = tags;
         this.browserUrls = browserUrls;
+        this.aiSummary = aiSummary;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -59,6 +62,20 @@ public class ContextEntry {
                                         String commands,
                                         String tags,
                                         String browserUrls) {
+        return newEntry(name, projectName, projectPath, gitRepoPath, gitBranch, openFiles, note, commands, tags, browserUrls, "");
+    }
+
+    public static ContextEntry newEntry(String name,
+                                        String projectName,
+                                        String projectPath,
+                                        String gitRepoPath,
+                                        String gitBranch,
+                                        String openFiles,
+                                        String note,
+                                        String commands,
+                                        String tags,
+                                        String browserUrls,
+                                        String aiSummary) {
         LocalDateTime now = LocalDateTime.now();
         return new ContextEntry(
                 0L,
@@ -72,6 +89,7 @@ public class ContextEntry {
                 commands,
                 tags,
                 browserUrls,
+                aiSummary,
                 now,
                 now
         );
@@ -165,6 +183,14 @@ public class ContextEntry {
         this.browserUrls = browserUrls;
     }
 
+    public String getAiSummary() {
+        return aiSummary;
+    }
+
+    public void setAiSummary(String aiSummary) {
+        this.aiSummary = aiSummary;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -194,6 +220,7 @@ public class ContextEntry {
                 commands,
                 tags,
                 browserUrls,
+                aiSummary,
                 createdAt,
                 updatedAt
         );
@@ -218,6 +245,7 @@ public class ContextEntry {
                 && Objects.equals(commands, that.commands)
                 && Objects.equals(tags, that.tags)
                 && Objects.equals(browserUrls, that.browserUrls)
+                && Objects.equals(aiSummary, that.aiSummary)
                 && Objects.equals(createdAt, that.createdAt)
                 && Objects.equals(updatedAt, that.updatedAt);
     }
@@ -236,6 +264,7 @@ public class ContextEntry {
                 commands,
                 tags,
                 browserUrls,
+                aiSummary,
                 createdAt,
                 updatedAt
         );

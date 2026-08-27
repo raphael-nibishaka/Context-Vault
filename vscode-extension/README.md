@@ -1,8 +1,8 @@
 # Context Vault for VS Code
 
-Companion extension for the Context Vault desktop app (V4 + V5).
+Companion extension for the Context Vault desktop app (V4–V6).
 
-Detect open tabs, terminals, and Git branch — then use **smart scoring** to suggest the files that belong to your current task.
+Detect open tabs, terminals, and Git branch — use **smart scoring** to suggest task files — then generate optional **AI / heuristic** summaries for save and welcome-back handoff.
 
 ## Sidebar
 
@@ -12,13 +12,14 @@ Context Vault
 Save Context
 Restore Context
 
+Welcome Back
+  You were working on JWT Authentication
+  Last activity: 2 days ago
+  Suggested next step: Run auth integration tests
+
 Likely Context
   I think these files belong to your current task.
-  PaymentController.ts
-  PaymentService.ts
-  StripeService.ts
   …
-  Save these 5 files as a context?
   [Save Context]
 
 Detected Now
@@ -36,21 +37,22 @@ My Contexts
 | Recently opened | +10 |
 | Related name/extension | +5 |
 
-Sources also include recent commits and recent terminal activity (when shell integration is available).
+## V6 intelligence (optional AI)
 
-## What it detects
+When saving a context, Context Vault generates:
 
-| Signal | Source |
-| --- | --- |
-| Open tabs | Editor tab groups |
-| Active file | Active text editor |
-| Workspace | VS Code workspace name/path |
-| Cursor / selection | Active editor |
-| Editor groups | `tabGroups` |
-| Open terminals | `window.terminals` |
-| Git branch / changes | Git CLI |
-| Recent opens | Extension activity tracker |
-| Recent terminal commands | Shell integration when available |
+- Context summary
+- Current work bullets
+- Likely next step
+- Task / commit / handoff summaries
+
+AI is **optional**. Without an API key, heuristic summaries are still generated from branch + files + notes.
+
+### Enable AI
+
+1. Command Palette → `Context Vault: Set AI API Key`
+2. Settings → `contextVault.enableAi = true`
+3. Optional: `contextVault.aiEndpoint`, `contextVault.aiModel`
 
 ## Install
 
@@ -61,30 +63,28 @@ npm run compile
 npx vsce package --no-dependencies
 ```
 
-In VS Code / Cursor:
-
-1. Extensions → `...` → **Install from VSIX...**
-2. Select `context-vault-1.2.0.vsix`
-3. Open the **Context Vault** icon in the activity bar
+Install `context-vault-1.3.0.vsix` via **Extensions → Install from VSIX…**
 
 ## Commands
 
 | Command | Description |
 | --- | --- |
 | `Context Vault: Detect Likely Context` | Refresh smart suggestions |
-| `Context Vault: Save Suggested Context` | Save the ranked likely-context files |
-| `Context Vault: Save Context` | Capture current workspace state |
+| `Context Vault: Save Suggested Context` | Save ranked likely-context files |
+| `Context Vault: Save Context` | Capture + summarize current workspace |
 | `Context Vault: Restore Context` | Restore a saved context |
-| `Context Vault: Show My Contexts` | Focus the sidebar |
+| `Context Vault: Set AI API Key` | Store OpenAI-compatible API key securely |
 
 ## Settings
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `contextVault.autoSave` | `true` | Auto-save editor session while you work |
-| `contextVault.autoRestore` | `true` | Auto-restore last editor session on open |
-| `contextVault.saveDelayMs` | `750` | Debounce for auto-save |
-| `contextVault.suggestionLimit` | `8` | Max files in the likely-context list |
+| `contextVault.autoSave` | `true` | Auto-save editor session |
+| `contextVault.autoRestore` | `true` | Auto-restore last editor session |
+| `contextVault.suggestionLimit` | `8` | Max likely-context files |
+| `contextVault.enableAi` | `false` | Use AI provider when available |
+| `contextVault.aiEndpoint` | OpenAI chat completions | OpenAI-compatible endpoint |
+| `contextVault.aiModel` | `gpt-4o-mini` | Model name |
 
 ## Storage
 

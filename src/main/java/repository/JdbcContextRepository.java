@@ -17,7 +17,7 @@ import java.util.Optional;
 public class JdbcContextRepository implements ContextRepository {
     private static final String SELECT_COLUMNS = """
             id, name, project_name, project_path, git_repo_path, git_branch,
-            open_files, note, commands, tags, browser_urls, created_at, updated_at
+            open_files, note, commands, tags, browser_urls, ai_summary, created_at, updated_at
             """;
 
     private final ConnectionFactory connectionFactory;
@@ -112,9 +112,9 @@ public class JdbcContextRepository implements ContextRepository {
         String sql = """
                 INSERT INTO contexts(
                     name, project_name, project_path, git_repo_path, git_branch,
-                    open_files, note, commands, tags, browser_urls, created_at, updated_at
+                    open_files, note, commands, tags, browser_urls, ai_summary, created_at, updated_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         LocalDateTime now = LocalDateTime.now();
@@ -142,7 +142,7 @@ public class JdbcContextRepository implements ContextRepository {
         String sql = """
                 UPDATE contexts
                 SET name = ?, project_name = ?, project_path = ?, git_repo_path = ?, git_branch = ?,
-                    open_files = ?, note = ?, commands = ?, tags = ?, browser_urls = ?,
+                    open_files = ?, note = ?, commands = ?, tags = ?, browser_urls = ?, ai_summary = ?,
                     created_at = ?, updated_at = ?
                 WHERE id = ?
                 """;
@@ -152,7 +152,7 @@ public class JdbcContextRepository implements ContextRepository {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             bind(statement, contextEntry);
-            statement.setLong(13, contextEntry.getId());
+            statement.setLong(14, contextEntry.getId());
             statement.executeUpdate();
             return contextEntry;
         } catch (SQLException exception) {
@@ -184,8 +184,9 @@ public class JdbcContextRepository implements ContextRepository {
         statement.setString(8, contextEntry.getCommands());
         statement.setString(9, contextEntry.getTags());
         statement.setString(10, contextEntry.getBrowserUrls());
-        statement.setString(11, toTimestamp(contextEntry.getCreatedAt()).toString());
-        statement.setString(12, toTimestamp(contextEntry.getUpdatedAt()).toString());
+        statement.setString(11, contextEntry.getAiSummary());
+        statement.setString(12, toTimestamp(contextEntry.getCreatedAt()).toString());
+        statement.setString(13, toTimestamp(contextEntry.getUpdatedAt()).toString());
     }
 
     private ContextEntry map(ResultSet resultSet) throws SQLException {
@@ -201,6 +202,7 @@ public class JdbcContextRepository implements ContextRepository {
                 resultSet.getString("commands"),
                 resultSet.getString("tags"),
                 resultSet.getString("browser_urls"),
+                resultSet.getString("ai_summary"),
                 parseDateTime(resultSet.getString("created_at")),
                 parseDateTime(resultSet.getString("updated_at"))
         );
