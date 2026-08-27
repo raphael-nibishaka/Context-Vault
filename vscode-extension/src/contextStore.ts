@@ -52,6 +52,8 @@ function toSummary(context: VaultContext): ContextSummary {
     gitBranch: context.gitBranch,
     openFileCount: context.openFiles.length,
     activeFile: context.activeFile,
+    nextStep: context.intelligence?.nextStep,
+    summary: context.intelligence?.summary,
   };
 }
 
@@ -95,7 +97,7 @@ export async function loadContext(id: string): Promise<VaultContext | undefined>
   try {
     const raw = await fs.readFile(target.fsPath, "utf8");
     const parsed = JSON.parse(raw) as VaultContext;
-    if (parsed.version !== CONTEXT_VERSION || !Array.isArray(parsed.tabs)) {
+    if ((parsed.version !== 2 && parsed.version !== CONTEXT_VERSION) || !Array.isArray(parsed.tabs)) {
       return undefined;
     }
     return parsed;
