@@ -311,6 +311,17 @@
     -fx-text-alignment: center;
 }
 
+.similar-match-banner {
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-border-width: 1px;
+}
+
+.similar-match-heading {
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+
 .about-logo {
     -fx-min-width: 76px;
     -fx-min-height: 76px;

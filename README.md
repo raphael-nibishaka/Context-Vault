@@ -59,6 +59,16 @@ AI is optional and only used after context is already collected.
 - Also produces task / commit / handoff style summaries
 - Without an API key, heuristic summaries still work
 
+### V7 — Debugging Memory
+
+Combine a debugging pattern journal with Context Vault so solved errors become reusable engineering memory.
+
+- Store error message, stack trace, project, file, solution, fix command, related context, and tags
+- Search debugging history from the desktop app or VS Code (`Search Debug History`)
+- Paste or select an error to get **You've seen something similar before** with the previous solution
+- **View Previous Fix** opens the saved resolution; **Log Debug Fix** captures new fixes from the editor or clipboard
+- Sample data includes the AgriSense `MongoServerSelectionError` → `docker compose up mongodb` example
+
 ## Features
 
 - Save project contexts with name, folder, branch, commands, and notes
@@ -68,6 +78,7 @@ AI is optional and only used after context is already collected.
 - Persist user settings for editor, terminal, and theme
 - SQLite-backed local storage with sample data on first launch
 - VS Code / Cursor extension with smart + optional AI intelligence
+- Personal debugging memory with similar-error matching and searchable fix history
 
 ## Tech Stack
 

@@ -4,13 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import config.ThemeManager;
 import database.ConnectionFactory;
 import database.DatabaseInitializer;
+import database.DebugSampleDataSeeder;
 import database.SampleDataSeeder;
 import repository.ContextRepository;
+import repository.DebugRepository;
 import repository.JdbcContextRepository;
+import repository.JdbcDebugRepository;
 import repository.JdbcSettingsRepository;
 import repository.SettingsRepository;
 import viewmodels.ContextFormViewModel;
 import viewmodels.DashboardViewModel;
+import viewmodels.DebugFormViewModel;
+import viewmodels.DebugMemoryViewModel;
 import viewmodels.MainViewModel;
 import viewmodels.SettingsViewModel;
 
@@ -26,12 +31,17 @@ public class ServiceContainer {
         ThemeManager themeManager = new ThemeManager();
 
         ContextRepository contextRepository = new JdbcContextRepository(connectionFactory);
+        DebugRepository debugRepository = new JdbcDebugRepository(connectionFactory);
         SettingsRepository settingsRepository = new JdbcSettingsRepository(connectionFactory, objectMapper);
 
         SampleDataSeeder sampleDataSeeder = new SampleDataSeeder(contextRepository);
         sampleDataSeeder.seedIfEmpty();
 
+        DebugSampleDataSeeder debugSampleDataSeeder = new DebugSampleDataSeeder(debugRepository);
+        debugSampleDataSeeder.seedIfEmpty();
+
         ContextService contextService = new ContextService(contextRepository);
+        DebugMemoryService debugMemoryService = new DebugMemoryService(debugRepository);
         SettingsService settingsService = new SettingsService(settingsRepository, themeManager);
         GitService gitService = new GitService();
         ExtensionBridgeService extensionBridgeService = new ExtensionBridgeService();
@@ -47,12 +57,16 @@ public class ServiceContainer {
                 extensionBridgeService
         );
         SettingsViewModel settingsViewModel = new SettingsViewModel(settingsService);
+        DebugMemoryViewModel debugMemoryViewModel = new DebugMemoryViewModel(debugMemoryService);
+        DebugFormViewModel debugFormViewModel = new DebugFormViewModel(debugMemoryService);
 
         applicationCoordinator = new ApplicationCoordinator(
                 mainViewModel,
                 dashboardViewModel,
                 contextFormViewModel,
                 settingsViewModel,
+                debugMemoryViewModel,
+                debugFormViewModel,
                 contextService,
                 settingsService,
                 restoreService,

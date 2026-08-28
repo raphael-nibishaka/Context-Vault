@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.DebugMemoryController"
+      spacing="18.0" styleClass="content-view">
+    <children>
+        <VBox spacing="6.0">
+            <children>
+                <Label text="Debugging Memory" styleClass="section-title" />
+                <Label fx:id="summaryLabel" text="0 saved debug fixes" styleClass="section-subtitle" />
+            </children>
+        </VBox>
+
+        <VBox fx:id="similarMatchBanner" spacing="8.0" styleClass="similar-match-banner, glass-inset" visible="false" managed="false">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16" />
+            </padding>
+            <children>
+                <Label text="⚡ You've seen something similar before." styleClass="similar-match-heading" />
+                <Label fx:id="similarMatchTitleLabel" styleClass="card-title" />
+                <Label text="Previous solution:" styleClass="field-label" />
+                <Label fx:id="similarMatchSolutionLabel" wrapText="true" styleClass="card-note" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Button fx:id="viewPreviousFixButton" text="View Previous Fix" styleClass="primary-button, glass-button" />
+                        <Button fx:id="logFixButton" text="Log New Fix Anyway" styleClass="secondary-button, glass-button" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <VBox spacing="8.0" styleClass="form-card, glass-inset">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16" />
+            </padding>
+            <children>
+                <Label text="Paste an error to check your debugging history" styleClass="field-label" />
+                <TextArea fx:id="probeErrorArea" promptText="MongoServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017" prefRowCount="4" wrapText="true" />
+            </children>
+        </VBox>
+
+        <StackPane VBox.vgrow="ALWAYS">
+            <children>
+                <ScrollPane fx:id="cardsScrollPane" fitToWidth="true" hbarPolicy="NEVER" styleClass="cards-scroll-pane">
+                    <content>
+                        <FlowPane fx:id="cardsPane" hgap="18.0" vgap="18.0" prefWrapLength="1120.0">
+                            <padding>
+                                <Insets top="6" right="6" bottom="6" left="6" />
+                            </padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+                <Label fx:id="emptyStateLabel" text="No debugging history yet. Log the next error you solve so Context Vault can remind you next time." wrapText="true" styleClass="empty-state-label" />
+            </children>
+        </StackPane>
+    </children>
+    <padding>
+        <Insets top="6" right="6" bottom="6" left="6" />
+    </padding>
+</VBox>

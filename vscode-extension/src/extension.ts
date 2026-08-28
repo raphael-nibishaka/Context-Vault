@@ -19,6 +19,13 @@ import { detectLikelyContext } from "./smartDetection";
 import { restoreEditorSession, restoreVaultContext } from "./tabRestore";
 import type { LikelyContextSuggestion } from "./types";
 import { buildWelcomeBackMessage } from "./welcomeBack";
+import {
+  activeWorkspaceContext,
+  debugEntriesBridgePath,
+  findBestSimilarMatch,
+  saveDebugEntry,
+  searchDebugEntries,
+} from "./debugMemory";
 
 const RESTORE_FLAG_KEY = "contextVault.restoredForWorkspace";
 const WELCOME_SHOWN_KEY = "contextVault.welcomeShownFor";
@@ -251,6 +258,161 @@ async function restoreNamedContext(id?: string): Promise<void> {
   }
 }
 
+async function saveDebugFixFromEditor(): Promise<void> {
+  const editor = vscode.window.activeTextEditor;
+  const selected = editor?.document.getText(editor.selection);
+  let clipboard = "";
+  try {
+    clipboard = await vscode.env.clipboard.readText();
+  } catch {
+    clipboard = "";
+  }
+  const errorText = (selected?.trim() || clipboard.trim()).trim();
+
+  if (!errorText) {
+    void vscode.window.showWarningMessage(
+      "Context Vault: select an error in the editor or copy one to the clipboard first."
+    );
+    return;
+  }
+
+  const workspace = activeWorkspaceContext();
+  const similar = await findBestSimilarMatch(errorText);
+  if (similar) {
+    const choice = await vscode.window.showInformationMessage(
+      `You've seen something similar before: ${similar.entry.errorType}`,
+      "View Previous Fix",
+      "Log New Fix Anyway"
+    );
+    if (choice === "View Previous Fix") {
+      await showDebugFixDetails(similar.entry);
+      return;
+    }
+  }
+
+  const solution = await vscode.window.showInputBox({
+    title: "Debug Fix Solution",
+    prompt: "What fixed it?",
+    ignoreFocusOut: true,
+  });
+  if (solution === undefined) {
+    return;
+  }
+
+  const fixCommand = await vscode.window.showInputBox({
+    title: "Fix Command",
+    prompt: "Optional command to rerun the fix (e.g. docker compose up mongodb)",
+    ignoreFocusOut: true,
+  });
+  if (fixCommand === undefined) {
+    return;
+  }
+
+  const saved = await saveDebugEntry({
+    errorMessage: errorText.split(/\r?\n/, 1)[0] ?? errorText,
+    stackTrace: errorText.includes("\n") ? errorText : "",
+    projectName: workspace.projectName,
+    projectPath: workspace.projectPath,
+    sourceFile: workspace.sourceFile,
+    solution: solution.trim(),
+    fixCommand: fixCommand.trim(),
+    relatedContext: "",
+    tags: "",
+  });
+
+  output.appendLine(`Saved debug fix "${saved.errorType}" to ${debugEntriesBridgePath()?.fsPath ?? "n/a"}`);
+  void vscode.window.showInformationMessage(`Saved debug fix for ${saved.errorType}.`);
+}
+
+async function showDebugFixDetails(entry: {
+  errorType: string;
+  errorMessage: string;
+  stackTrace?: string;
+  solution?: string;
+  fixCommand?: string;
+  relatedContext?: string;
+}): Promise<void> {
+  const lines = [
+    entry.errorMessage,
+    "",
+    entry.stackTrace ? `Stack trace\n${entry.stackTrace}\n` : "",
+    entry.solution ? `Solution\n${entry.solution}\n` : "",
+    entry.fixCommand ? `Fix command\n${entry.fixCommand}\n` : "",
+    entry.relatedContext ? `Related context\n${entry.relatedContext}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await vscode.window.showInformationMessage(entry.errorType, { modal: true, detail: lines });
+}
+
+async function checkSimilarError(): Promise<void> {
+  const editor = vscode.window.activeTextEditor;
+  const selected = editor?.document.getText(editor.selection);
+  let clipboard = "";
+  try {
+    clipboard = await vscode.env.clipboard.readText();
+  } catch {
+    clipboard = "";
+  }
+  const errorText = (selected?.trim() || clipboard.trim()).trim();
+
+  if (!errorText) {
+    void vscode.window.showWarningMessage(
+      "Context Vault: select an error in the editor or copy one to the clipboard first."
+    );
+    return;
+  }
+
+  const match = await findBestSimilarMatch(errorText);
+  if (!match) {
+    void vscode.window.showInformationMessage("Context Vault: no similar debug fix found yet.");
+    return;
+  }
+
+  const choice = await vscode.window.showInformationMessage(
+    `You've seen something similar before: ${match.entry.errorType}. ${match.entry.solution || match.entry.fixCommand || ""}`,
+    "View Previous Fix",
+    "Log New Fix"
+  );
+  if (choice === "View Previous Fix") {
+    await showDebugFixDetails(match.entry);
+  } else if (choice === "Log New Fix") {
+    await saveDebugFixFromEditor();
+  }
+}
+
+async function searchDebugHistory(): Promise<void> {
+  const query = await vscode.window.showInputBox({
+    title: "Search Debugging History",
+    prompt: 'Try "Mongo connection" or an error type',
+    ignoreFocusOut: true,
+  });
+  if (query === undefined) {
+    return;
+  }
+
+  const results = await searchDebugEntries(query);
+  if (results.length === 0) {
+    void vscode.window.showInformationMessage("Context Vault: no debug fixes matched that search.");
+    return;
+  }
+
+  const picked = await vscode.window.showQuickPick(
+    results.map((entry) => ({
+      label: entry.errorType || entry.errorMessage,
+      description: entry.solution || entry.fixCommand || "No solution recorded",
+      detail: entry.sourceFile ? `${entry.projectName || "Project"} · ${entry.sourceFile}` : entry.projectName,
+      entry,
+    })),
+    { title: "Debugging History", placeHolder: "Choose a saved fix" }
+  );
+
+  if (picked) {
+    await showDebugFixDetails(picked.entry);
+  }
+}
+
 async function restoreLatestContext(): Promise<void> {
   const contexts = await listContexts();
   if (contexts.length === 0) {
@@ -322,7 +484,7 @@ export function activate(context: vscode.ExtensionContext): void {
   extensionContext = context;
   output = vscode.window.createOutputChannel("Context Vault");
   context.subscriptions.push(output);
-  output.appendLine("Context Vault V6 extension activated.");
+  output.appendLine("Context Vault V7 extension activated.");
 
   activityTracker.attach(context);
 
@@ -404,7 +566,10 @@ export function activate(context: vscode.ExtensionContext): void {
           ? "Context Vault cleared the saved editor session."
           : "Context Vault: no saved editor session to clear."
       );
-    })
+    }),
+    vscode.commands.registerCommand("contextVault.saveDebugFix", () => saveDebugFixFromEditor()),
+    vscode.commands.registerCommand("contextVault.checkSimilarError", () => checkSimilarError()),
+    vscode.commands.registerCommand("contextVault.searchDebugHistory", () => searchDebugHistory())
   );
 
   context.subscriptions.push(

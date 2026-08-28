@@ -46,6 +46,24 @@ public class DatabaseInitializer {
                     )
                     """);
 
+            statement.execute("""
+                    CREATE TABLE IF NOT EXISTS debug_entries (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        error_message TEXT NOT NULL,
+                        stack_trace TEXT,
+                        error_type TEXT,
+                        project_name TEXT,
+                        project_path TEXT,
+                        source_file TEXT,
+                        solution TEXT,
+                        fix_command TEXT,
+                        related_context TEXT,
+                        tags TEXT,
+                        created_at TEXT NOT NULL,
+                        updated_at TEXT NOT NULL
+                    )
+                    """);
+
             migrateContextsTable(connection);
             LOGGER.info("Database schema ready");
         } catch (SQLException exception) {

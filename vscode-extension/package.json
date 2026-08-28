@@ -1,8 +1,8 @@
 {
   "name": "context-vault",
   "displayName": "Context Vault",
-  "description": "Smart + optional AI context intelligence for VS Code — detect, summarize, and restore developer work.",
-  "version": "1.3.0",
+  "description": "Smart context intelligence + debugging memory for VS Code — detect, summarize, restore, and remember fixes.",
+  "version": "1.4.0",
   "publisher": "contextvault",
   "license": "MIT",
   "repository": {
@@ -89,6 +89,21 @@
       {
         "command": "contextVault.clearEditorSession",
         "title": "Context Vault: Clear Saved Session"
+      },
+      {
+        "command": "contextVault.saveDebugFix",
+        "title": "Context Vault: Save Debug Fix",
+        "icon": "$(bug)"
+      },
+      {
+        "command": "contextVault.checkSimilarError",
+        "title": "Context Vault: Check Similar Error",
+        "icon": "$(history)"
+      },
+      {
+        "command": "contextVault.searchDebugHistory",
+        "title": "Context Vault: Search Debug History",
+        "icon": "$(search)"
       }
     ],
     "menus": {
