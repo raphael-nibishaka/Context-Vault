@@ -39,6 +39,8 @@ public class MainController {
     @FXML
     private Button createContextButton;
     @FXML
+    private Button debugMemoryButton;
+    @FXML
     private Button settingsButton;
     @FXML
     private Button aboutButton;
@@ -55,6 +57,7 @@ public class MainController {
     private Stage primaryStage;
     private ApplicationCoordinator coordinator;
     private DashboardController dashboardController;
+    private DebugMemoryController debugMemoryController;
 
     private double dragOffsetX;
     private double dragOffsetY;
@@ -71,6 +74,7 @@ public class MainController {
         navigationButtons.put(Page.DASHBOARD, dashboardButton);
         navigationButtons.put(Page.CONTEXTS, contextsButton);
         navigationButtons.put(Page.CREATE_CONTEXT, createContextButton);
+        navigationButtons.put(Page.DEBUG_MEMORY, debugMemoryButton);
         navigationButtons.put(Page.SETTINGS, settingsButton);
         navigationButtons.put(Page.ABOUT, aboutButton);
 
@@ -89,6 +93,7 @@ public class MainController {
         ButtonFactory.decorate(dashboardButton, "fas-chart-line");
         ButtonFactory.decorate(contextsButton, "fas-folder-open");
         ButtonFactory.decorate(createContextButton, "fas-plus");
+        ButtonFactory.decorate(debugMemoryButton, "fas-bug");
         ButtonFactory.decorate(settingsButton, "fas-cog");
         ButtonFactory.decorate(aboutButton, "fas-info-circle");
         ButtonFactory.decorate(topNewContextButton, "fas-plus");
@@ -96,6 +101,7 @@ public class MainController {
         dashboardButton.setTooltip(new Tooltip("Open dashboard overview"));
         contextsButton.setTooltip(new Tooltip("Browse all saved contexts"));
         createContextButton.setTooltip(new Tooltip("Save a new project context"));
+        debugMemoryButton.setTooltip(new Tooltip("Browse debugging history and saved fixes"));
         settingsButton.setTooltip(new Tooltip("Editor, terminal, and theme"));
         aboutButton.setTooltip(new Tooltip("About Context Vault"));
         topNewContextButton.setTooltip(new Tooltip("Create a new context"));
@@ -171,6 +177,7 @@ public class MainController {
         dashboardButton.setOnAction(event -> coordinator.getMainViewModel().navigate(Page.DASHBOARD));
         contextsButton.setOnAction(event -> coordinator.getMainViewModel().navigate(Page.CONTEXTS));
         createContextButton.setOnAction(event -> coordinator.createContext());
+        debugMemoryButton.setOnAction(event -> coordinator.getMainViewModel().navigate(Page.DEBUG_MEMORY));
         settingsButton.setOnAction(event -> coordinator.getMainViewModel().navigate(Page.SETTINGS));
         aboutButton.setOnAction(event -> coordinator.getMainViewModel().navigate(Page.ABOUT));
         topNewContextButton.setOnAction(event -> coordinator.createContext());
@@ -188,6 +195,9 @@ public class MainController {
             if (dashboardController != null) {
                 dashboardController.applySearch(newValue);
             }
+            if (debugMemoryController != null) {
+                debugMemoryController.applySearch(newValue);
+            }
         });
     }
 
@@ -201,29 +211,51 @@ public class MainController {
                     dashboardController = loader.getController();
                     dashboardController.initialize(coordinator, primaryStage, page.getTitle());
                     dashboardController.applySearch(searchField.getText());
+                    debugMemoryController = null;
                 }
                 case CREATE_CONTEXT -> {
                     ContextFormController controller = loader.getController();
                     controller.initialize(coordinator, primaryStage);
                     dashboardController = null;
+                    debugMemoryController = null;
+                }
+                case DEBUG_MEMORY -> {
+                    debugMemoryController = loader.getController();
+                    debugMemoryController.initialize(coordinator, primaryStage);
+                    debugMemoryController.applySearch(searchField.getText());
+                    dashboardController = null;
+                }
+                case DEBUG_FORM -> {
+                    DebugFormController controller = loader.getController();
+                    controller.initialize(coordinator, primaryStage);
+                    dashboardController = null;
+                    debugMemoryController = null;
                 }
                 case SETTINGS -> {
                     SettingsController controller = loader.getController();
                     controller.initialize(coordinator, primaryStage);
                     dashboardController = null;
+                    debugMemoryController = null;
                 }
                 case ABOUT -> {
                     AboutController controller = loader.getController();
                     controller.initialize();
                     dashboardController = null;
+                    debugMemoryController = null;
                 }
             }
 
             contentContainer.getChildren().setAll(view);
             AnimationUtils.fadeIn(view);
             pageTitleLabel.setText(page.getTitle());
-            searchField.setDisable(!(page == Page.DASHBOARD || page == Page.CONTEXTS));
-            searchField.setPromptText("Search by name, branch, or path");
+            boolean searchable = page == Page.DASHBOARD || page == Page.CONTEXTS || page == Page.DEBUG_MEMORY;
+            searchField.setDisable(!searchable);
+            searchField.setPromptText(page == Page.DEBUG_MEMORY
+                    ? "Search debugging history..."
+                    : "Search by name, branch, or path");
+            boolean showNewContext = page == Page.DASHBOARD || page == Page.CONTEXTS;
+            topNewContextButton.setVisible(showNewContext);
+            topNewContextButton.setManaged(showNewContext);
             setActiveButton(page);
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to load page: " + page, exception);

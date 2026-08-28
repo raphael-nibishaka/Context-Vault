@@ -215,6 +215,15 @@
     -fx-text-fill: #CBD5E1;
 }
 
+.similar-match-banner {
+    -fx-background-color: linear-gradient(to right, rgba(245, 158, 11, 0.16), rgba(56, 189, 248, 0.08));
+    -fx-border-color: rgba(251, 191, 36, 0.35);
+}
+
+.similar-match-heading {
+    -fx-text-fill: #FCD34D;
+}
+
 .about-logo {
     -fx-background-color: linear-gradient(to bottom right, rgba(56, 189, 248, 0.98), rgba(37, 99, 235, 0.98));
     -fx-text-fill: #F8FAFC;

@@ -3,8 +3,11 @@ package services;
 import config.Page;
 import config.ThemeManager;
 import models.ContextEntry;
+import models.DebugEntry;
 import viewmodels.ContextFormViewModel;
 import viewmodels.DashboardViewModel;
+import viewmodels.DebugFormViewModel;
+import viewmodels.DebugMemoryViewModel;
 import viewmodels.MainViewModel;
 import viewmodels.SettingsViewModel;
 
@@ -13,6 +16,8 @@ public class ApplicationCoordinator {
     private final DashboardViewModel dashboardViewModel;
     private final ContextFormViewModel contextFormViewModel;
     private final SettingsViewModel settingsViewModel;
+    private final DebugMemoryViewModel debugMemoryViewModel;
+    private final DebugFormViewModel debugFormViewModel;
     private final ContextService contextService;
     private final SettingsService settingsService;
     private final RestoreService restoreService;
@@ -24,6 +29,8 @@ public class ApplicationCoordinator {
                                   DashboardViewModel dashboardViewModel,
                                   ContextFormViewModel contextFormViewModel,
                                   SettingsViewModel settingsViewModel,
+                                  DebugMemoryViewModel debugMemoryViewModel,
+                                  DebugFormViewModel debugFormViewModel,
                                   ContextService contextService,
                                   SettingsService settingsService,
                                   RestoreService restoreService,
@@ -34,6 +41,8 @@ public class ApplicationCoordinator {
         this.dashboardViewModel = dashboardViewModel;
         this.contextFormViewModel = contextFormViewModel;
         this.settingsViewModel = settingsViewModel;
+        this.debugMemoryViewModel = debugMemoryViewModel;
+        this.debugFormViewModel = debugFormViewModel;
         this.contextService = contextService;
         this.settingsService = settingsService;
         this.restoreService = restoreService;
@@ -44,12 +53,17 @@ public class ApplicationCoordinator {
 
     public void initialize() {
         dashboardViewModel.loadContexts();
+        debugMemoryViewModel.loadEntries();
         settingsViewModel.load();
         mainViewModel.navigate(Page.DASHBOARD);
     }
 
     public void refreshContexts() {
         dashboardViewModel.loadContexts();
+    }
+
+    public void refreshDebugEntries() {
+        debugMemoryViewModel.loadEntries();
     }
 
     public void editContext(ContextEntry contextEntry) {
@@ -60,6 +74,16 @@ public class ApplicationCoordinator {
     public void createContext() {
         contextFormViewModel.prepareForCreate();
         mainViewModel.navigate(Page.CREATE_CONTEXT);
+    }
+
+    public void logDebugFix(String prefilledErrorText) {
+        debugFormViewModel.prepareForCreate(prefilledErrorText);
+        mainViewModel.navigate(Page.DEBUG_FORM);
+    }
+
+    public void editDebugEntry(DebugEntry entry) {
+        debugFormViewModel.editEntry(entry);
+        mainViewModel.navigate(Page.DEBUG_FORM);
     }
 
     public MainViewModel getMainViewModel() {
@@ -76,6 +100,14 @@ public class ApplicationCoordinator {
 
     public SettingsViewModel getSettingsViewModel() {
         return settingsViewModel;
+    }
+
+    public DebugMemoryViewModel getDebugMemoryViewModel() {
+        return debugMemoryViewModel;
+    }
+
+    public DebugFormViewModel getDebugFormViewModel() {
+        return debugFormViewModel;
     }
 
     public ContextService getContextService() {

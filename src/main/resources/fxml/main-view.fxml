@@ -81,6 +81,7 @@
                                         <Button fx:id="dashboardButton" text="Dashboard" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
                                         <Button fx:id="contextsButton" text="Contexts" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
                                         <Button fx:id="createContextButton" text="Create Context" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
+                                        <Button fx:id="debugMemoryButton" text="Debug Memory" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
                                         <Button fx:id="settingsButton" text="Settings" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
                                         <Button fx:id="aboutButton" text="About" maxWidth="1.7976931348623157E308" styleClass="nav-button" />
                                     </children>

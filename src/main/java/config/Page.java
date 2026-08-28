@@ -5,6 +5,8 @@ public enum Page {
     CONTEXTS("Contexts", "/fxml/dashboard-view.fxml"),
     CREATE_CONTEXT("Create Context", "/fxml/context-form-view.fxml"),
     SETTINGS("Settings", "/fxml/settings-view.fxml"),
+    DEBUG_MEMORY("Debug Memory", "/fxml/debug-memory-view.fxml"),
+    DEBUG_FORM("Log Debug Fix", "/fxml/debug-form-view.fxml"),
     ABOUT("About", "/fxml/about-view.fxml");
 
     private final String title;
